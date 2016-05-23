@@ -22,4 +22,15 @@ public class Libro {
 	public String getTitolo(){
 		return this.titolo;
 	}
+	
+	@Override
+	public boolean equals(Object o){
+		Libro that=(Libro)o;
+		return this.getTitolo().equals(that.getTitolo());
+	}
+	
+	@Override
+	public int hashCode(){
+		return this.getTitolo().hashCode();
+	}
 }
