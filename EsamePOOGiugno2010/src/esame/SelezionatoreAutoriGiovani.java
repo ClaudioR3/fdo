@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class AutoriGiovani implements Selezionatore{
+public class SelezionatoreAutoriGiovani implements Selezionatore{
 
 	@Override
 	public List<Autore> eseguiSelezione(List<Libro> libriInBiblioteca) {

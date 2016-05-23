@@ -14,8 +14,19 @@ public class Biblioteca {
 	}
 	
 	public Map<Autore, Set<Libro>> autore2libri() {
-		Map<Autore, Set<Libro>> autore2libri = null;
-		// codice omesso
+		Map<Autore, Set<Libro>> autore2libri = new HashMap<Autore,Set<Libro>>();
+		for(Libro libro:this.codice2libro.values()){
+			for(Autore a:libro.getAutori()){
+				if(autore2libri.containsKey(a))
+					autore2libri.get(a).add(libro);
+				else{
+					Set<Libro> libri=new HashSet<Libro>();
+					libri.add(libro);
+					autore2libri.put(a, libri);
+				}
+			}
+		}
+		
 		return autore2libri;
 	}
 	
