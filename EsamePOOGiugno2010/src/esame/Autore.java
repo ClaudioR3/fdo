@@ -14,4 +14,15 @@ public class Autore {
 	public int getAnnoNascita() {
 		return this.annoNascita;
 	}
+	
+	@Override
+	public boolean equals(Object o){
+		Autore that=(Autore)o;
+		return this.getNome()==that.getNome()&&that.getAnnoNascita()==this.getAnnoNascita();
+	}
+	
+	@Override
+	public int hashCode(){
+		return this.getAnnoNascita()+this.getNome().hashCode();
+	}
 }
