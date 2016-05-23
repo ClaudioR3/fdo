@@ -13,16 +13,15 @@ public class Biblioteca {
 		this.codice2libro.put(codice, libro);
 	}
 	
-	public List<Autore> autoriGiovani() {
-		List<Autore> autoriGiovani = null;
-		// codice omesso
-		return autoriGiovani;
-	}
-	
 	public Map<Autore, Set<Libro>> autore2libri() {
 		Map<Autore, Set<Libro>> autore2libri = null;
 		// codice omesso
 		return autore2libri;
 	}
-	// altri metodi omessi
+	
+	public List<Autore> seleziona(Selezionatore selezionatore){
+		List<Autore> l=null;
+		l=selezionatore.eseguiSelezione((List<Libro>)this.codice2libro.values());
+		return l;
+	}
 }
