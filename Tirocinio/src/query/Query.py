@@ -42,4 +42,11 @@ class Query:
         self.FROM=f
     
     def toString(self):
-        return "select "+self.getSelect()+" from "+self.getFrom()+" where "+self.getWhere()      
+        if self.getWhere()!="":
+            return "select "+self.getSelect()+" from "+self.getFrom()+" where "+self.getWhere()
+        return "select "+self.getSelect()+" from "+self.getFrom()
+        
+        
+        
+        
+        
