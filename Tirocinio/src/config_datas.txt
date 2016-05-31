@@ -1,0 +1,4 @@
+host www.medcordex.eu
+user mdcx172
+passwd 23=Dh+1
+db medcordex

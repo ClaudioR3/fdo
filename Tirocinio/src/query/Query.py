@@ -41,6 +41,12 @@ class Query:
     def setFrom(self,f):
         self.FROM=f
     
+    def setSelect(self,s):
+        self.SELECT=s
+        
+    def add_in_select(self,s):
+        self.SELECT+=", "+s
+    
     def toString(self):
         if self.getWhere()!="":
             return "select "+self.getSelect()+" from "+self.getFrom()+" where "+self.getWhere()

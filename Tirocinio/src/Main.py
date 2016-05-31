@@ -9,7 +9,13 @@ from connection.Connection import Connection
 q=Query()
 q.set_where_with_args()
 q.setFrom("MEDCORDEX")
+q.setSelect("fname")
+q.add_in_select("size")
 print q.toString()
-c=Connection(passwd="@@Cloud24",db="medcordex")
+
+c=Connection(host="www.medcordex.eu",user="mdcx172",passwd="23=Dh+1",db="medcordex")
 for line in c.send_query(q.toString()):
     print line
+    
+c.set_from_file()
+c.toString()
