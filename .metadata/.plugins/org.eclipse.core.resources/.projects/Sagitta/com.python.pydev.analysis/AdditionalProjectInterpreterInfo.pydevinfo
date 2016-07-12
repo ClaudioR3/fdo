@@ -1,0 +1,43 @@
+-- VERSION_4
+-- START DISKCACHE_2
+/home/claudio/workspace/.metadata/.plugins/org.eclipse.core.resources/.projects/Sagitta/com.python.pydev.analysis/v2_indexcache
+Query|1468307211000000000|/home/claudio/workspace/Sagitta/src/Query.py
+Document|1468307597000000000|/home/claudio/workspace/Sagitta/src/Document.py
+Main|1467709956000000000|/home/claudio/workspace/Sagitta/src/Main.py
+-- END DISKCACHE
+-- START DICTIONARY
+5
+3=Query
+5=Document.__init__
+2=Document
+1=Main
+4=Query.__init__
+-- END DICTIONARY
+-- START TREE 1
+11
+arg|1|args!11@
+cal|1|calcola_quantity!10@
+dbl|0|
+def|1|definisci_args!10@
+doc|1|Document!17@
+hel|1|help!10@
+ope|1|operazione!11@
+q|1|q!11@
+que|1|Query!25@
+rie|1|riempiArgs!10@
+ris|1|risultato!11@
+-- END TREE
+-- START TREE 2
+11
+__i|2|__init__!2&18@__init__!3&26@
+_in|0|
+bui|1|build_where!3&26@
+con|1|confronta!3&26@
+dat|0|
+dbl|1|dblink!4&27@
+do_|2|do_query!3&26@do_describe!3&26@
+get|4|get_params_from_doc!2&18@get_params!2&18@get_db!2&18@get_table!2&18@
+is_|2|is_alias!3&26@is_defined!3&26@
+par|1|params!5&19@
+sen|0|
+-- END TREE

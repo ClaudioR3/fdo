@@ -3,7 +3,7 @@ Created on 01 lug 2016
 
 @author: claudio
 '''
-from DBlink import *
+from DBlink import DBlink
 
 class Query:
     '''
@@ -23,7 +23,6 @@ class Query:
         return n1==n2
         
     def is_defined(self,name,describe):
-        commento="verifica se il nome e' valido e se alias"
         nameDefined=""
         for e in describe:
             if self.confronta(name,e):

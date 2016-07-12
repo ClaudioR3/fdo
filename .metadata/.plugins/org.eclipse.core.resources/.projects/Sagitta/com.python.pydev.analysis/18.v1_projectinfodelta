@@ -1,0 +1,13 @@
+INSTUPDBlink
+/home/claudio/workspace/Sagitta/src/DBlink.py
+INFOS:&&1|1|1|0&&2|2|1|1&&3|3|1|4&&2|5|1|1&&2|6|1|1&&2|7|1|1&&2|8|1|1&&2|9|1|1&&2|10|1|1
+DBlink=1
+DBlink._init_=4
+_init_=2
+send_query=10
+doc=3
+get_data=6
+get_table=8
+config=5
+get_cursore=7
+get_db=9

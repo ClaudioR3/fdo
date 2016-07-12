@@ -1,0 +1,36 @@
+'''
+Created on 01 lug 2016
+
+@author: claudio
+'''
+import MySQLdb
+from Document import *
+class DBlink:
+    '''
+    classdocs
+    '''
+    
+    def _init_(self):
+        self.data=Document()
+        
+    def config(self,params):
+        pass
+        
+    def get_data(self):
+        return self.data
+    
+    def get_cursore(self):
+        a=self.get_data().get_params()
+        database=MySQLdb.connect(host=a["host"],user=a["user"],passwd=a["passwd"],db=a["db"])
+        return database.cursor()
+    
+    def get_table(self):
+        return params["table"]
+    
+    def get_db(self):
+        return self.data.get_params()["db"]
+        
+    def send_query(self,query):
+        cursore=self.get_cursore()
+        cursore.execute(query)
+        return cursore.fetchall()
