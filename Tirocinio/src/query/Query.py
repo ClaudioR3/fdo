@@ -17,17 +17,12 @@ class Query:
         
     def set_where_with_args(self):
         pf=PositionFactory()
-        try:
-            mappa=pf.scandisciArg()
-            for k in mappa:
-                try:
-                    if self.WHERE!="":
-                        self.WHERE+=" and "
-                    self.WHERE+=mappa[k].toString()
-                except ():
-                    print "argomento "+k+" non inserito"
-        except:
-            print "Problemi scansione argomenti"
+        mappa=pf.scandisciArg()
+        for k in mappa:
+            if self.WHERE!="":
+                self.WHERE+=" and "
+        self.WHERE+=mappa[k].toString()
+
     
     def getWhere(self):
         return self.WHERE

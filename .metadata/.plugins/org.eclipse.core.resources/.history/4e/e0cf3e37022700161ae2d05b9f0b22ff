@@ -1,0 +1,62 @@
+'''
+Created on 29 mag 2016
+
+@author: claudio
+'''
+import MySQLdb
+class Connection:
+    '''
+    classdocs
+    '''
+
+
+    def __init__(self, host="localhost",user="root",passwd="",db="database"):
+        self.host=host
+        self.user=user
+        self.passwd=passwd
+        self.db=db
+    
+    def run(self):
+        try :
+            database=MySQLdb.connect(host=self.host,user=self.user,passwd=self.passwd,db=self.db)
+            return database.cursor()
+        except (),e:
+            print e
+            return ""
+    
+    def save_in_file(self):
+        try:
+            document=open("config_datas.txt","w")
+            document.write("host",self.host)
+            document.write("user",self.user)
+            document.write("passwd",self.passwd)
+            document.write("db",self.db)
+            document.close()
+        except:
+            print "DataConfig.txt non creato"
+    
+    def import_datas_from_file(self):
+        try:
+            document=open("config_data.txt","r")
+            l=document.readlines()
+            for k,v in l:
+                if k=="host":
+                    self.setHost(v)
+                if k=="host":
+                    self.setUser(v)
+                if k=="host":
+                    self.setPasswd(v)
+                if k=="host":
+                    self.setDB(v)
+                              
+        except():
+            print "DataConfig.txt non presente"
+    
+    def send_query(self,query):
+        cursore=self.run()
+        try:
+            cursore.execute(query)
+            return cursore.fetchall()
+        except():
+            print "Problema della query"
+            return ""

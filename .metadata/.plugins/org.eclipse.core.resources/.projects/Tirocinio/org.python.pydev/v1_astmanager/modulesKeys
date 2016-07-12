@@ -1,0 +1,15 @@
+MODULES_MANAGER_V2
+Main|/home/claudio/workspace/Tirocinio/src/Main.py
+argfactory.Factory|/home/claudio/workspace/Tirocinio/src/argfactory/Factory.py
+argfactory.PositionFactory|/home/claudio/workspace/Tirocinio/src/argfactory/PositionFactory.py
+argfactory.__init__|/home/claudio/workspace/Tirocinio/src/argfactory/__init__.py
+argv.Argomento|/home/claudio/workspace/Tirocinio/src/argv/Argomento.py
+argv.Frequency|/home/claudio/workspace/Tirocinio/src/argv/Frequency.py
+argv.VariableName|/home/claudio/workspace/Tirocinio/src/argv/VariableName.py
+argv.__init__|/home/claudio/workspace/Tirocinio/src/argv/__init__.py
+connection.Connection|/home/claudio/workspace/Tirocinio/src/connection/Connection.py
+connection.Document|/home/claudio/workspace/Tirocinio/src/connection/Document.py
+connection.__init__|/home/claudio/workspace/Tirocinio/src/connection/__init__.py
+prova|/home/claudio/workspace/Tirocinio/src/prova.py
+query.Query|/home/claudio/workspace/Tirocinio/src/query/Query.py
+query.__init__|/home/claudio/workspace/Tirocinio/src/query/__init__.py
