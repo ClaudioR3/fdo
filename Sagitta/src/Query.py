@@ -4,6 +4,7 @@ Created on 01 lug 2016
 @author: claudio
 '''
 from DBlink import DBlink
+import sys
 
 class Query:
     '''
@@ -49,16 +50,26 @@ class Query:
         
     def do_query(self,args):
         query="select * from "+self.dblink.get_table()+" "+self.build_where(args)
-        return self.dblink.send_query(query)
+        try :
+            tupla=self.dblink.send_query(query)
+            return "%d risultati"%len(tupla)
+        except ():
+            return sys.exc_info()[0]
     
     def do_describe(self):
         query="describe MEDCORDEX"
         describe=self.dblink.send_query(query)
-        l=[]
+        l=""
         for elem in describe:
-            l.append(elem[0])
+            l+=elem[0]+" "
         return l
+    
+    def get_config_toString(self):
+        return self.dblink.get_config_toString()
     
     def config_dblink(self,params):
         self.dblink.config(params)
+        
+    def del_config(self):
+        self.dblink.del_config()
                 

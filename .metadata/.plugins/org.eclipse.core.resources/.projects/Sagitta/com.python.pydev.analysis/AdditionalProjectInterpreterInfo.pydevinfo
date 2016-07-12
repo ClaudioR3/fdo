@@ -1,17 +1,21 @@
 -- VERSION_4
 -- START DISKCACHE_2
 /home/claudio/workspace/.metadata/.plugins/org.eclipse.core.resources/.projects/Sagitta/com.python.pydev.analysis/v2_indexcache
-Query|1468310368000000000|/home/claudio/workspace/Sagitta/src/Query.py
-DBlink|1468309766000000000|/home/claudio/workspace/Sagitta/src/DBlink.py
-Main|1468310581000000000|/home/claudio/workspace/Sagitta/src/Main.py
+Query|1468317264000000000|/home/claudio/workspace/Sagitta/src/Query.py
+DBlink|1468317307000000000|/home/claudio/workspace/Sagitta/src/DBlink.py
+Document|1468317172000000000|/home/claudio/workspace/Sagitta/src/Document.py
+Main|1468317232000000000|/home/claudio/workspace/Sagitta/src/Main.py
 -- END DISKCACHE
 -- START DICTIONARY
-5
-3=Query
+8
+4=Query
 2=DBlink
+8=Document.set_params
+7=Document.__init__
+3=Document
 1=Main
-4=Query.__init__
-5=DBlink.__init__
+5=Query.__init__
+6=DBlink.__init__
 -- END DICTIONARY
 -- START TREE 1
 11
@@ -19,28 +23,31 @@ arg|1|args!11@
 cal|0|
 dbl|1|DBlink!17@
 def|1|definisci_args!10@
-doc|0|
+doc|1|Document!25@
 hel|1|help1!10@
 ope|1|operazione!11@
 q|1|q!11@
-que|1|Query!25@
+que|1|Query!33@
 rie|1|riempiArgs!10@
-ris|1|risultato!11@
+ris|0|
 -- END TREE
 -- START TREE 2
-14
-__i|2|__init__!2&18@__init__!3&26@
+17
+__i|3|__init__!2&18@__init__!3&26@__init__!4&34@
 _in|0|
-bui|1|build_where!3&26@
-con|3|confronta!3&26@config!2&18@config_dblink!3&26@
-dbl|1|dblink!4&27@
-do_|2|do_query!3&26@do_describe!3&26@
-doc|1|doc!5&19@
-get|4|get_cursore!2&18@get_table!2&18@get_db!2&18@get_doc!2&18@
-is_|2|is_alias!3&26@is_defined!3&26@
-par|0|
-rea|0|
+bui|1|build_where!4&34@
+con|3|confronta!4&34@config!2&18@config_dblink!4&34@
+dbl|1|dblink!5&35@
+del|3|del_config!4&34@del_config!2&18@delete!3&26@
+do_|2|do_query!4&34@do_describe!4&34@
+doc|1|doc!6&19@
+get|12|get_params!3&26@get_config_toString!4&34@get_cursore!2&18@get_passwd!3&26@get_table!2&18@get_config_toString!2&18@get_host!3&26@get_db!2&18@get_user!3&26@get_db!3&26@get_doc!2&18@get_table!3&26@
+is_|2|is_alias!4&34@is_defined!4&34@
+nam|1|name!7&27@
+par|2|params!7&27@params!8&27@
+rea|1|read!3&26@
 sen|1|send_query!2&18@
-set|0|
-wri|0|
+set|1|set_params!3&26@
+tos|1|toString!3&26@
+wri|1|write!3&26@
 -- END TREE

@@ -28,7 +28,7 @@ def definisci_args():
     return risultato
 
 def help1():
-    lista=["find","help1","describe"]
+    lista=["find","help1","describe","config","getconfig"]
     print "Lista di comandi disponibili"
     for elem in lista:
         print elem+"  "
@@ -38,14 +38,16 @@ args=definisci_args()
 operazione=args[1]
 if operazione=="find":
     args=riempiArgs(args[2:]) 
-    risultato=q.do_query(args)
-    print "%d risultati"%risultato.size()
+    print q.do_query(args)
 elif operazione=="describe":
-    for e in q.do_describe():
-        print e
+    print q.do_describe()
 elif operazione=="config":
     args=riempiArgs(args[2:])
     q.config_dblink(args)
+elif operazione=="getconfig":
+    print q.get_config_toString()
+elif operazione=="delconfig":
+    q.del_config()
 elif operazione=="help":
     help1()
 else:
