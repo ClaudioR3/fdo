@@ -34,7 +34,7 @@ def help():
     lista=["help","find","describe","config","getconfig","delconfig"]
     s= "List of operation: \n"
     for elem in lista:
-        s+= "'"+elem+"' "
+        s+= "'"+elem+"'  "
     return s
 
 q=Query()

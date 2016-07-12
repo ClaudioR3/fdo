@@ -2,8 +2,8 @@
 -- START DISKCACHE_2
 /home/claudio/workspace/.metadata/.plugins/org.eclipse.core.resources/.projects/Sagitta/com.python.pydev.analysis/v2_indexcache
 Query|1468317264000000000|/home/claudio/workspace/Sagitta/src/Query.py
-DBlink|1468317307000000000|/home/claudio/workspace/Sagitta/src/DBlink.py
-Document|1468317172000000000|/home/claudio/workspace/Sagitta/src/Document.py
+DBlink|1468317410000000000|/home/claudio/workspace/Sagitta/src/DBlink.py
+Document|1468317591000000000|/home/claudio/workspace/Sagitta/src/Document.py
 Main|1468317232000000000|/home/claudio/workspace/Sagitta/src/Main.py
 -- END DISKCACHE
 -- START DICTIONARY
@@ -18,9 +18,8 @@ Main|1468317232000000000|/home/claudio/workspace/Sagitta/src/Main.py
 6=DBlink.__init__
 -- END DICTIONARY
 -- START TREE 1
-11
+9
 arg|1|args!11@
-cal|0|
 dbl|1|DBlink!17@
 def|1|definisci_args!10@
 doc|1|Document!25@
@@ -29,19 +28,17 @@ ope|1|operazione!11@
 q|1|q!11@
 que|1|Query!33@
 rie|1|riempiArgs!10@
-ris|0|
 -- END TREE
 -- START TREE 2
 17
 __i|3|__init__!2&18@__init__!3&26@__init__!4&34@
-_in|0|
 bui|1|build_where!4&34@
 con|3|confronta!4&34@config!2&18@config_dblink!4&34@
 dbl|1|dblink!5&35@
 del|3|del_config!4&34@del_config!2&18@delete!3&26@
 do_|2|do_query!4&34@do_describe!4&34@
 doc|1|doc!6&19@
-get|12|get_params!3&26@get_config_toString!4&34@get_cursore!2&18@get_passwd!3&26@get_table!2&18@get_config_toString!2&18@get_host!3&26@get_db!2&18@get_user!3&26@get_db!3&26@get_doc!2&18@get_table!3&26@
+get|12|get_params!3&26@get_config_toString!4&34@get_cursore!2&18@get_table!2&18@get_passwd!3&26@get_config_toString!2&18@get_db!2&18@get_host!3&26@get_user!3&26@get_db!3&26@get_doc!2&18@get_table!3&26@
 is_|2|is_alias!4&34@is_defined!4&34@
 nam|1|name!7&27@
 par|2|params!7&27@params!8&27@
@@ -49,5 +46,6 @@ rea|1|read!3&26@
 sen|1|send_query!2&18@
 set|1|set_params!3&26@
 tos|1|toString!3&26@
+upd|1|update!3&26@
 wri|1|write!3&26@
 -- END TREE
