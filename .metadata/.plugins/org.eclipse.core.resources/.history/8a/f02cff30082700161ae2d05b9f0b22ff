@@ -1,9 +1,0 @@
-'''
-Created on May 31, 2016
-
-@author: claudio
-'''
-documento=open("config_datas.txt","r")
-lines=documento.readlines()
-for l in lines:
-    print l

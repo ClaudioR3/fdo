@@ -10,26 +10,26 @@ class DBlink:
     classdocs
     '''
     
-    def _init_(self):
-        self.doc=Document()
+    def __init__(self):
+        self.doc=Document("config.txt")
         
     def config(self,params):
-        pass
+        self.get_doc().write(params)
         
-    def get_data(self):
+    def get_doc(self):
         return self.doc
     
     def get_cursore(self):
-        a=self.get_data().get_params()
+        a=self.get_doc().get_params()
         database=MySQLdb.connect(host=a["host"],user=a["user"],passwd=a["passwd"],db=a["db"])
         return database.cursor()
     
     def get_table(self):
-        params=self.get_data().get_params()
+        params=self.get_doc().get_params()
         return params["table"]
     
     def get_db(self):
-        return self.get_data().get_params()["db"]
+        return self.get_doc().get_params()["db"]
         
     def send_query(self,query):
         cursore=self.get_cursore()

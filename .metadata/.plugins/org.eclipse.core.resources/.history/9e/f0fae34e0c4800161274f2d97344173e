@@ -1,0 +1,38 @@
+'''
+Created on Jul 12, 2016
+
+@author: claudio
+'''
+
+class Document:
+    '''
+    classdocs
+    '''
+
+
+    def __init__(self):
+        self.params=self.read()
+        
+    def read(self):
+        doc= open("config.txt", "r").read()
+        p=doc.split("\n")
+        params={}
+        for i in p:
+            riga_in_lista=i.split(";")
+            for k,v in riga_in_lista:
+                params[k]=v
+        return params
+    
+    def get_params(self):
+        return self.params
+    
+    def set_params(self,params):
+        self.params=params
+    
+    def write(self,params):
+        doc = open("config.txt", "w")
+        for p in params.keys():
+            riga = "%s;%s\n"%(p,params[p])
+            doc.write(riga)
+        doc.close()
+        self.set_params(self.read())

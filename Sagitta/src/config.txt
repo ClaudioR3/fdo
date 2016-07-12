@@ -1,0 +1,5 @@
+passwd;123
+table;MEDOCRDEX
+host;localhost
+db;medcordex
+user;root

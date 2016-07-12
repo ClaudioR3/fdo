@@ -58,4 +58,7 @@ class Query:
         for elem in describe:
             l.append(elem[0])
         return l
+    
+    def config_dblink(self,params):
+        self.dblink.config(params)
                 
