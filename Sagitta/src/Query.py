@@ -59,9 +59,9 @@ class Query:
     def do_describe(self):
         query="describe MEDCORDEX"
         describe=self.dblink.send_query(query)
-        l=""
+        l=[]
         for elem in describe:
-            l+=elem[0]+" "
+            l.append(elem[0])
         return l
     
     def get_config_toString(self):

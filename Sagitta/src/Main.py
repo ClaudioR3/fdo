@@ -49,7 +49,8 @@ if operazione=="":
 elif operazione=="find": 
     print q.do_query(riempiArgs(args[2:]))
 elif operazione=="describe":
-    print q.do_describe()
+    for i in q.do_describe():
+        print i
 elif operazione=="config":
     q.config_dblink(riempiArgs(args[2:]))
 elif operazione=="getconfig":
