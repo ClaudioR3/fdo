@@ -9,15 +9,23 @@ class Document:
         self.name=name
         self.params=self.read()
         
+    def create_file(self):
+        doc = open(self.name, "w")
+        doc.close()
+        return self.read()
+        
     def read(self):
-        doc= open(self.name, "r").read()
-        p=doc.split("\n")
-        params={}
-        for i in p:
-            lista_riga=i.split(";")
-            if lista_riga!=[""]:
+        try:
+            doc= open(self.name, "r").read()
+            p=doc.split("\n")
+            params={}
+            for i in p:
+                lista_riga=i.split(";")
+                if lista_riga!=[""]:
                     params[lista_riga[0]]=lista_riga[1]
-        return params
+            return params
+        except:
+            return self.create_file()
     
     def update(self,params):
         for p in params:
@@ -63,6 +71,11 @@ class Document:
     def get_user(self):
         if self.get_params().has_key("user"):
             return self.get_params()["user"]
+        return ""
+    
+    def get_query(self):
+        if self.get_params().has_key("query"):
+            return self.get_params()["query"]
         return ""
     
     def set_params(self,params):

@@ -31,7 +31,7 @@ def not_operation():
     return "Not Defined Operation, 'help' for list of operations"
 
 def help():
-    lista=["help","find","describe","config","getconfig","delconfig"]
+    lista=["help","find","describe","config","getconfig","delconfig","wget"]
     s= "List of operation: \n"
     for elem in lista:
         s+= "'"+elem+"' "
@@ -47,7 +47,10 @@ else :
 if operazione=="":
     print not_operation()
 elif operazione=="find": 
-    print q.do_query(riempiArgs(args[2:]))
+    try :
+        print q.do_query(riempiArgs(args[2:]))
+    except ():
+        print "Configuration Problems"
 elif operazione=="describe":
     for i in q.do_describe():
         print i
@@ -57,6 +60,8 @@ elif operazione=="getconfig":
     print q.get_config_toString()
 elif operazione=="delconfig":
     q.del_config()
+elif operazione=="wget":
+    print q.wget()
 elif operazione=="help":
     print help()
 else:

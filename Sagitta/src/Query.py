@@ -4,7 +4,7 @@ Created on 01 lug 2016
 @author: claudio
 '''
 from DBlink import DBlink
-import sys
+from Document import *
 
 class Query:
     '''
@@ -17,6 +17,8 @@ class Query:
         Constructor
         '''
         self.dblink=DBlink()
+        self.lastquery=Document("lastquery.txt")
+        
         
     def confronta(self,n1,n2):
         n1=str.lower(n1)
@@ -47,18 +49,22 @@ class Query:
         if s!="":
             s=" where "+s
         return s
+    
+    def save_query(self,q):
+        a={"query":q}
+        self.lastquery.write(a)
         
     def do_query(self,args):
-        query="select * from "+self.dblink.get_table()+" "+self.build_where(args)
         try :
+            query="select * from "+self.dblink.get_table()+" "+self.build_where(args)
             tupla=self.dblink.send_query(query)
+            self.save_query(query)
             return "%d risultati"%len(tupla)
-        except ():
-            return sys.exc_info()[0]
+        except:
+            return "Problem 0: Wrong Config"
     
     def do_describe(self):
-        query="describe MEDCORDEX"
-        describe=self.dblink.send_query(query)
+        describe=self.dblink.send_query("describe MEDCORDEX")
         l=[]
         for elem in describe:
             l.append(elem[0])
@@ -72,4 +78,10 @@ class Query:
         
     def del_config(self):
         self.dblink.del_config()
+        
+    def wget(self):
+        risultato=""
+        for a in self.dblink.send_query(self.lastquery.get_query()):
+            risultato+="wget "+a[1]+"\n"
+        return risultato
                 

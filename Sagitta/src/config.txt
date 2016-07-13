@@ -1,3 +1,5 @@
+passwd;23=Dh+1
+table;MEDCORDEX
 host;www.medcordex.eu
 db;medcordex
 user;mdcx172
