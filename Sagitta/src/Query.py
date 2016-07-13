@@ -64,11 +64,14 @@ class Query:
             return "Problem 0: Wrong Config"
     
     def do_describe(self):
-        describe=self.dblink.send_query("describe MEDCORDEX")
-        l=[]
-        for elem in describe:
-            l.append(elem[0])
-        return l
+        try:
+            describe=self.dblink.send_query("describe MEDCORDEX")
+            l=[]
+            for elem in describe:
+                l.append(elem[0])
+            return l
+        except:
+            return ["Problem 0: Wrong Config"]
     
     def get_config_toString(self):
         return self.dblink.get_config_toString()
@@ -83,7 +86,11 @@ class Query:
         risultato=""
         try : 
             for a in self.dblink.send_query(self.lastquery.get_query()):
-                risultato+="wget "+a[1]+"\n"
+                risultato+="wget "
+                for i in range(0,2):
+                    risultato+= str(a[i])+" "
+                risultato+="\n"
             return risultato
-        except:
-            return "Last Query not founded"
+        except(),e:
+            print e
+            return "Last Query not founded or Wrong Config"
