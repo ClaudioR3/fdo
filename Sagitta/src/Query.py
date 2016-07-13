@@ -81,7 +81,9 @@ class Query:
         
     def wget(self):
         risultato=""
-        for a in self.dblink.send_query(self.lastquery.get_query()):
-            risultato+="wget "+a[1]+"\n"
-        return risultato
-                
+        try : 
+            for a in self.dblink.send_query(self.lastquery.get_query()):
+                risultato+="wget "+a[1]+"\n"
+            return risultato
+        except:
+            return "Last Query not founded"
