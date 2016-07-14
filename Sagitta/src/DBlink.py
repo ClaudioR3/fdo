@@ -42,3 +42,11 @@ class DBlink:
         cursore=self.get_cursore()
         cursore.execute(query)
         return cursore.fetchall()
+    
+    def find_conn_probls(self):
+        try:
+            self.get_cursore()
+            return "Table Problem \n you can do 'config -table TABLE' to define table"
+        except:
+            return self.get_doc().verif_conn_params()
+        

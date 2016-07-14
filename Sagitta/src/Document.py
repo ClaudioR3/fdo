@@ -81,6 +81,13 @@ class Document:
     def set_params(self,params):
         self.params=params
     
+    def verif_conn_params(self):
+        vcp=["host", "db", "user", "passwd", "table"]
+        nfp=[i for i in vcp if i not in self.get_params().keys()]
+        if len(nfp)!=0:
+            return nfp[0:] +" is/are null"
+        return "Wrong Config of Conn "+ "\n 'getconfig' to look your config "
+        
     def toString(self):
         s=""
         keyset=self.get_params().keys()

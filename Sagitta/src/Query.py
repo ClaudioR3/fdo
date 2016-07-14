@@ -61,7 +61,7 @@ class Query:
             self.save_query(query)
             return "%d risultati"%len(tupla)
         except:
-            return "Problem 0: Wrong Config"
+            return self.find_conn_probls()
     
     def do_describe(self):
         try:
@@ -71,7 +71,7 @@ class Query:
                 l.append(elem[0])
             return l
         except:
-            return ["Problem 0: Wrong Config"]
+            return [self.find_conn_probls()]
     
     def get_config_toString(self):
         return self.dblink.get_config_toString()
@@ -91,6 +91,8 @@ class Query:
                     risultato+= str(a[i])+" "
                 risultato+="\n"
             return risultato
-        except(),e:
-            print e
+        except:
             return "Last Query not founded or Wrong Config"
+        
+    def find_conn_probls(self):
+        return self.dblink.find_conn_probls()

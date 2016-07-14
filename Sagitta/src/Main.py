@@ -50,7 +50,7 @@ elif operazione=="find":
     try :
         print q.do_query(riempiArgs(args[2:]))
     except ():
-        print "Configuration Problems"
+        print q.find_conn_probls()
 elif operazione=="describe":
     for i in q.do_describe():
         print i
@@ -61,16 +61,18 @@ elif operazione=="getconfig":
 elif operazione=="delconfig":
     q.del_config()
 elif operazione=="wget":
-    print q.wget()
+    try :
+        if len(args)>2:
+            if args[2]=="find":
+                q.do_query(riempiArgs(args[3:]))
+                print q.wget()
+            else :
+                print not_operation()
+        else:
+            print q.wget()
+    except:
+        print q.find_conn_probls()
 elif operazione=="help":
     print help()
 else:
     print not_operation()
-    
-    
-    
-    
-    
-    
-    
-    
