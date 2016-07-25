@@ -54,12 +54,38 @@ class Query:
         a={"query":q}
         self.lastquery.write(a)
         
+    def get_datasets(self,tupla):
+        datasets={}
+        index_dataset=self.get_index("dataset")
+        index_size=self.get_index("size")
+        for elem in tupla:
+            if datasets.has_key(elem[index_dataset]):
+                datasets[elem[index_dataset]][0]+=1
+                datasets[elem[index_dataset]][1]+=elem[index_size]
+            else:
+                datasets[elem[index_dataset]]=[1,elem[index_size]]
+        return datasets
+            
+        
+    def tupla_toString(self,tupla):
+        datasets=self.get_datasets(tupla)
+        s=""
+        i=0
+        tot_files=0
+        tot_size=0
+        for d in datasets:
+            i+=1
+            tot_files+=datasets[d][0]
+            tot_size+=datasets[d][1]
+            s+="Database n° {0:3d}: name {1:<30}, ".format(i,d)+"{0:5d} files {1:5.2f} MB \n".format(datasets[d][0],datasets[d][1])
+        return "Finded "+str(tot_files)+" files in " +str(i)+" Datasets, total size "+str(tot_size)+"MB\n\n"+s
+        
     def do_query(self,args):
         try :
             query="select * from "+self.dblink.get_table()+" "+self.build_where(args)
             tupla=self.dblink.send_query(query)
             self.save_query(query)
-            return "%d risultati"%len(tupla)
+            return self.tupla_toString(tupla)
         except:
             return self.find_conn_probls()
     
@@ -82,11 +108,10 @@ class Query:
     def del_config(self):
         self.dblink.del_config()
         
-    def get_index_fname(self):
+    def get_index(self,name):
         index=0
         for a in self.do_describe():
-            if a=="fname":
-                print index
+            if a==name:
                 return index
             index+=1
         return -1
@@ -94,7 +119,7 @@ class Query:
     def wget(self):
         risultato=""
         url=self.dblink.get_url()
-        index_fname=self.get_index_fname()
+        index_fname=self.get_index("fname")
         try : 
             for a in self.dblink.send_query(self.lastquery.get_query()):
                 risultato+="wget "+url+a[index_fname]
