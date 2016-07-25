@@ -82,13 +82,22 @@ class Query:
     def del_config(self):
         self.dblink.del_config()
         
+    def get_index_fname(self):
+        index=0
+        for a in self.do_describe():
+            if a=="fname":
+                print index
+                return index
+            index+=1
+        return -1
+        
     def wget(self):
         risultato=""
+        url=self.dblink.get_url()
+        index_fname=self.get_index_fname()
         try : 
             for a in self.dblink.send_query(self.lastquery.get_query()):
-                risultato+="wget "
-                for i in range(0,2):
-                    risultato+= str(a[i])+" "
+                risultato+="wget "+url+a[index_fname]
                 risultato+="\n"
             return risultato
         except:

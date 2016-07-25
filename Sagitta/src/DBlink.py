@@ -37,6 +37,9 @@ class DBlink:
     
     def get_db(self):
         return self.get_doc().get_db()
+    
+    def get_url(self):
+        return "ftp://"+self.get_doc().get_user()+":"+self.get_doc().get_passwd()+"@www."+self.get_db()+".eu/ALL/"
         
     def send_query(self,query):
         cursore=self.get_cursore()

@@ -1,1 +1,1 @@
-query;select * from MEDCORDEX  where  frequency = '3hr'  and  variablename = 'tas' 
+query;select * from MEDCORDEX  where  frequency = '6hr'  and  variablename = 'tas' 
