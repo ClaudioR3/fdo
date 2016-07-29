@@ -55,6 +55,7 @@ class Query:
         self.lastquery.write(a)
         
     def get_datasets(self,tupla):
+        #return {dataset name:[n file , n size]}
         datasets={}
         index_dataset=self.get_index("dataset")
         index_size=self.get_index("size")
@@ -77,7 +78,6 @@ class Query:
             i+=1
             tot_files+=datasets[d][0]
             tot_size+=datasets[d][1]
-            s+="Database n° {0:3d}: name {1:<30}, ".format(i,d)+"{0:5d} files {1:5.2f} MB \n".format(datasets[d][0],datasets[d][1])
         return "Finded "+str(tot_files)+" files in " +str(i)+" Datasets, total size "+str(tot_size)+"MB\n\n"+s
         
     def do_query(self,args):
@@ -85,7 +85,7 @@ class Query:
             query="select * from "+self.dblink.get_table()+" "+self.build_where(args)
             tupla=self.dblink.send_query(query)
             self.save_query(query)
-            return self.tupla_toString(tupla)
+            return len(tupla)
         except:
             return self.find_conn_probls()
     
