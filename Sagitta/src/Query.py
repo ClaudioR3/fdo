@@ -78,6 +78,7 @@ class Query:
             i+=1
             tot_files+=datasets[d][0]
             tot_size+=datasets[d][1]
+            s+= "%70s : %03d files %6d MB \n"%(d,int(d[0]),3)
         return "Finded "+str(tot_files)+" files in " +str(i)+" Datasets, total size "+str(tot_size)+"MB\n\n"+s
         
     def do_query(self,args):
@@ -85,7 +86,7 @@ class Query:
             query="select * from "+self.dblink.get_table()+" "+self.build_where(args)
             tupla=self.dblink.send_query(query)
             self.save_query(query)
-            return len(tupla)
+            return tupla
         except:
             return self.find_conn_probls()
     

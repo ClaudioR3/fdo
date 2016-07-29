@@ -4,22 +4,13 @@ Created on Jul 29, 2016
 @author: claudio
 '''
 import sys
-from Query import Query
-
+from Operations import *
 class OperationFactory:
     def __init__(self):
         pass
     
-    def help(self):     # @return: list of operations 
-        lista=["help","find","describe","config","getconfig","delconfig","wget"]
-        s= "List of operation: \n"
-        for elem in lista:
-            s+= "'"+elem+"' "
-        return s
-    
     def find_op(self):
-        #create Query istance
-        q=Query()
+        op=Operation()
         #list of argoments by python
         args=self.definisci_args()
         if len(args)>1:
@@ -30,45 +21,70 @@ class OperationFactory:
 
         if operazione=="":
             #case operation null  
-            print self.not_operation()
+            op=NotOperation()
         elif operazione=="find": 
-            try :
-                #do query with all (argoments - operation) 
-                print q.do_query(self.riempiArgs(args[2:])) 
-            except ():
-                print q.find_conn_probls()
+            op=FindOperation(self.riempiArgs(args[2:]))
         elif operazione=="describe":
-            #print all camp name of database     
-            for i in q.do_describe():
-                print i
+            op=DescribeOperation()
         elif operazione=="config":
-            #configure connection data
-            q.config_dblink(self.riempiArgs(args[2:]))
+            op=ConfigOperation(self.riempiArgs(args[2:]))
         elif operazione=="getconfig":
-            #print connection data
-            print q.get_config_toString()
+            op=GetconfigOperation()
         elif operazione=="delconfig":
-            #delete connection data
-            q.del_config()
+            op=DelconfigOperation()
         elif operazione=="wget":
-            #print wget + url of last query
-            try :
-                if len(args)>2:
-                    #case nestled 'find'
-                    if args[2]=="find":
-                        q.do_query(self.riempiArgs(args[3:]))
-                        print q.wget()
-                    else :
-                        print self.not_operation()
-                else:
-                    print q.wget()
-            except:
-                print q.find_conn_probls()
+            op=WgetOperation()
         elif operazione=="help":
-            print self.help()
+            op=HelpOperation()
         else:
-            print self.not_operation()
+            op=NotOperation()
+        return op
 
+    def riempiArgs(self,lista):
+        args={}
+        i=0
+        key=""
+        for arg in sys.argv:
+            if i>1:
+                if arg[0]=='-':
+                    key=arg[1:]
+                else :
+                    if key!="":
+                        args[key]=arg
+                        key=""
+            i+=1
+        return args
+
+    def definisci_args(self):
+        risultato=[]
+        for arg in sys.argv:
+            risultato.append(arg)
+        return risultato
+
+class ReflectionOperationFactory:
+    def __init__(self):
+        pass
+    
+    def find_op(self):
+        
+            args=self.definisci_args()
+            if len(args)>1:
+                #first argoment must be the operation to do
+                op=args[1]  
+            else :
+                return Notoperation()
+            op_name="Operations."+str.upper(op[0])+str.lower(op[1:])+"Operation"
+            the_class = self.my_import(op_name)
+            the_class.set_args(self.riempiArgs(args[2:]))
+            return the_class
+        
+    def my_import(self,name):
+        components = name.split('.')
+        mod = __import__(components[0])
+        for comp in components[1:]:
+            mod = getattr(mod, comp)
+        return mod
+    
     def riempiArgs(self,lista):
         args={}
         i=0
@@ -89,7 +105,3 @@ class OperationFactory:
         for arg in sys.argv:
             risultato.append(arg)
         return risultato
-
-    def not_operation(self):
-        return "Not Defined Operation, 'help' for list of operations"
-

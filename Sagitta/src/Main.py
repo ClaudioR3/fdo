@@ -5,10 +5,10 @@ Created on 04 lug 2016
 '''
 
 from Query import Query
-from OperationFactory import OperationFactory
+from OperationFactory import *
 
 #initialization
 q=Query()
-opfact=OperationFactory()
 # create and perform the operation
-opfact.find_op()
+op=OperationFactory().find_op()
+print op.run(q)
