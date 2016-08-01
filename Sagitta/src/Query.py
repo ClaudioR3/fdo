@@ -54,6 +54,15 @@ class Query:
         a={"query":q}
         self.lastquery.write(a)
         
+    def save_datasets(self,datasets):
+        i=1
+        lq={}
+        lq["query"]=self.lastquery.get_query()
+        for d in datasets:
+            lq[i]=d
+            i+=1
+        self.lastquery.write(lq)
+        
     def get_datasets(self,tupla):
         #return {dataset name:[n file , n size]}
         datasets={}
@@ -65,6 +74,7 @@ class Query:
                 datasets[elem[index_dataset]][1]+=elem[index_size]
             else:
                 datasets[elem[index_dataset]]=[1,elem[index_size]]
+        self.save_datasets(datasets)
         return datasets
             
         
@@ -74,11 +84,12 @@ class Query:
         i=0
         tot_files=0
         tot_size=0
+        s+="row %69s %13s %14s\n"%("FILE NAME","N FILES","N MBs")
         for d in datasets:
             i+=1
             tot_files+=datasets[d][0]
             tot_size+=datasets[d][1]
-            s+= "%70s : %03d files %6d MB \n"%(d,int(d[0]),3)
+            s+= "%02d %70s : %5d files %10.2f MB \n"%(i,d,datasets[d][0],datasets[d][1])
         return "Finded "+str(tot_files)+" files in " +str(i)+" Datasets, total size "+str(tot_size)+"MB\n\n"+s
         
     def do_query(self,args):
@@ -108,6 +119,18 @@ class Query:
         
     def del_config(self):
         self.dblink.del_config()
+        
+    def get_row_dataset(self,number):
+        #return dataset name in row==number in lastquery.txt 
+        if self.lastquery.get_params().has_key(number):
+            return self.lastquery.get_params()[number]
+        else:
+            return ""
+        
+    def select_row(self,num):
+        print self.lastquery.get_query()+" and dataset = '"+self.get_row_dataset(num)+"'"
+        return self.dblink.send_query(self.lastquery.get_query()+" and dataset = '"+self.get_row_dataset(num))+"'"
+        #To DO safe?
         
     def get_index(self,name):
         index=0

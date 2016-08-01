@@ -34,6 +34,8 @@ class OperationFactory:
             op=DelconfigOperation()
         elif operazione=="wget":
             op=WgetOperation()
+        elif operazione=="selectrow":
+            op=SelectrowOperation(args[2])
         elif operazione=="help":
             op=HelpOperation()
         else:
@@ -72,7 +74,7 @@ class ReflectionOperationFactory:
                 #first argoment must be the operation to do
                 op=args[1]  
             else :
-                return Notoperation()
+                return NotOperation()
             op_name="Operations."+str.upper(op[0])+str.lower(op[1:])+"Operation"
             the_class = self.my_import(op_name)
             the_class.set_args(self.riempiArgs(args[2:]))

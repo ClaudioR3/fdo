@@ -82,6 +82,16 @@ class WgetOperation(Operation):
             #return q.find_conn_probls()
             return "Problems"
         
+class SelectrowOperation(Operation):
+    def __init__(self,args=[]):
+        Operation.__init__(self, args)
+        
+    def run(self,q=Query()):
+        try:
+            return len(q.select_row(q.get_row_dataset(self.args[0])))
+        except (),e:
+            return e
+        
 class HelpOperation(Operation):
     def __init__(self,args=[]):
         Operation.__init__(self, args)
