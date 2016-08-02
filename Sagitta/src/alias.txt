@@ -1,0 +1,7 @@
+variablename;vname
+Variablename;varname
+vAriablename;v
+frequency;freq
+Frequency;f
+fname;name
+Fname;n

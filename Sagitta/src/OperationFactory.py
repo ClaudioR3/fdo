@@ -23,11 +23,11 @@ class OperationFactory:
             #case operation null  
             op=NotOperation()
         elif operazione=="find": 
-            op=FindOperation(self.riempiArgs(args[2:]))
+            op=FindOperation()
         elif operazione=="describe":
             op=DescribeOperation()
         elif operazione=="config":
-            op=ConfigOperation(self.riempiArgs(args[2:]))
+            op=ConfigOperation()
         elif operazione=="getconfig":
             op=GetconfigOperation()
         elif operazione=="delconfig":
@@ -35,27 +35,13 @@ class OperationFactory:
         elif operazione=="wget":
             op=WgetOperation()
         elif operazione=="selectrow":
-            op=SelectrowOperation(args[2])
+            op=SelectrowOperation()
         elif operazione=="help":
             op=HelpOperation()
         else:
             op=NotOperation()
+        op.set_args(args[2:])
         return op
-
-    def riempiArgs(self,lista):
-        args={}
-        i=0
-        key=""
-        for arg in sys.argv:
-            if i>1:
-                if arg[0]=='-':
-                    key=arg[1:]
-                else :
-                    if key!="":
-                        args[key]=arg
-                        key=""
-            i+=1
-        return args
 
     def definisci_args(self):
         risultato=[]

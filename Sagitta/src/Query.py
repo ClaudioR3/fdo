@@ -18,6 +18,7 @@ class Query:
         '''
         self.dblink=DBlink()
         self.lastquery=Document("lastquery.txt")
+        self.alias=Document("alias.txt")
         
         
     def confronta(self,n1,n2):
@@ -27,14 +28,18 @@ class Query:
         
     def is_defined(self,name,describe):
         nameDefined=""
-        for e in describe:
-            if self.confronta(name,e):
+        for camp in describe:
+            if self.confronta(name,camp):
                 nameDefined=name
         if nameDefined=="":
             nameDefined=self.is_alias(name)
         return nameDefined
     
     def is_alias(self,name):
+        map=self.alias.get_params()
+        for k in map:
+            if map[k]==name:
+                return k
         return ""
         
     def build_where(self,args):
@@ -44,27 +49,29 @@ class Query:
             nameDefined=self.is_defined(name,describe)
             if nameDefined!="":
                 if s!="":
-                    s+=" and "
-                s+= " "+nameDefined+" = '"+args[name]+"' "
+                    s+=" and"
+                s+= " "+nameDefined+" = '"+args[name]+"'"
         if s!="":
-            s=" where "+s
+            s=" where"+s
         return s
     
     def save_query(self,q):
+        #save query in lastquery.txt
         a={"query":q}
         self.lastquery.write(a)
         
     def save_datasets(self,datasets):
+        #save in lastquery.txt {row:dataset name} (no delete query)
         i=1
         lq={}
-        lq["query"]=self.lastquery.get_query()
+        lq["query"]=self.lastquery.get_parameter("query")
         for d in datasets:
             lq[i]=d
             i+=1
         self.lastquery.write(lq)
         
     def get_datasets(self,tupla):
-        #return {dataset name:[n file , n size]}
+        #return {dataset name:[n file , n size(MB)]}
         datasets={}
         index_dataset=self.get_index("dataset")
         index_size=self.get_index("size")
@@ -74,12 +81,12 @@ class Query:
                 datasets[elem[index_dataset]][1]+=elem[index_size]
             else:
                 datasets[elem[index_dataset]]=[1,elem[index_size]]
-        self.save_datasets(datasets)
         return datasets
-            
-        
+    
     def tupla_toString(self,tupla):
+        #return N Datasets, N files, N size(MB)
         datasets=self.get_datasets(tupla)
+        self.save_datasets(datasets)
         s=""
         i=0
         tot_files=0
@@ -90,26 +97,20 @@ class Query:
             tot_files+=datasets[d][0]
             tot_size+=datasets[d][1]
             s+= "%02d %70s : %5d files %10.2f MB \n"%(i,d,datasets[d][0],datasets[d][1])
-        return "Finded "+str(tot_files)+" files in " +str(i)+" Datasets, total size "+str(tot_size)+"MB\n\n"+s
+        return "\nFinded "+str(tot_files)+" files in " +str(i)+" Datasets, total size "+str(tot_size)+"MB\n\n"+s
         
     def do_query(self,args):
-        try :
-            query="select * from "+self.dblink.get_table()+" "+self.build_where(args)
-            tupla=self.dblink.send_query(query)
-            self.save_query(query)
-            return tupla
-        except:
-            return self.find_conn_probls()
+        query="select * from "+self.dblink.get_table()+self.build_where(args)
+        tupla=self.dblink.send_query(query)
+        self.save_query(query)
+        return tupla
     
     def do_describe(self):
-        try:
-            describe=self.dblink.send_query("describe MEDCORDEX")
-            l=[]
-            for elem in describe:
-                l.append(elem[0])
-            return l
-        except:
-            return [self.find_conn_probls()]
+        describe=self.dblink.send_query("describe MEDCORDEX")
+        l=[]
+        for elem in describe:
+            l.append(elem[0])
+        return l
     
     def get_config_toString(self):
         return self.dblink.get_config_toString()
@@ -119,18 +120,20 @@ class Query:
         
     def del_config(self):
         self.dblink.del_config()
+    
+    def get_last_query(self):
+        return self.lastquery.get_parameter("query")
         
-    def get_row_dataset(self,number):
-        #return dataset name in row==number in lastquery.txt 
-        if self.lastquery.get_params().has_key(number):
-            return self.lastquery.get_params()[number]
-        else:
-            return ""
+    def send_query(self,query):
+        tupla=self.dblink.send_query(query)
+        self.save_query(query)
+        datasets=self.get_datasets(tupla)
+        self.save_datasets(datasets)
+        return tupla
         
-    def select_row(self,num):
-        print self.lastquery.get_query()+" and dataset = '"+self.get_row_dataset(num)+"'"
-        return self.dblink.send_query(self.lastquery.get_query()+" and dataset = '"+self.get_row_dataset(num))+"'"
-        #To DO safe?
+    
+    def get_row_dataset(self,num):
+        return self.lastquery.get_parameter(num)
         
     def get_index(self,name):
         index=0
@@ -140,17 +143,8 @@ class Query:
             index+=1
         return -1
         
-    def wget(self):
-        risultato=""
-        url=self.dblink.get_url()
-        index_fname=self.get_index("fname")
-        try : 
-            for a in self.dblink.send_query(self.lastquery.get_query()):
-                risultato+="wget "+url+a[index_fname]
-                risultato+="\n"
-            return risultato
-        except:
-            return "Last Query not founded or Wrong Config"
+    def get_url(self):
+        return self.dblink.get_url()
         
     def find_conn_probls(self):
         return self.dblink.find_conn_probls()

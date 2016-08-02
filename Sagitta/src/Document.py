@@ -48,44 +48,22 @@ class Document:
     def get_params(self):
         return self.params
     
-    def get_db(self):
-        if self.get_params().has_key("db"):
-            return self.get_params()["db"]
-        return ""
-    
-    def get_table(self):
-        if self.get_params().has_key("table"):
-            return self.get_params()["table"]
-        return ""
-
-    def get_host(self):
-        if self.get_params().has_key("host"):
-            return self.get_params()["host"]
-        return ""
-    
-    def get_passwd(self):
-        if self.get_params().has_key("passwd"):
-            return self.get_params()["passwd"]
-        return ""
-    
-    def get_user(self):
-        if self.get_params().has_key("user"):
-            return self.get_params()["user"]
-        return ""
-    
-    def get_query(self):
-        if self.get_params().has_key("query"):
-            return self.get_params()["query"]
-        return ""
-    
     def set_params(self,params):
         self.params=params
+    
+    def get_parameter(self,key):
+        if self.get_params().has_key(key):
+            return self.get_params()[key]
+        return ""
     
     def verif_conn_params(self):
         vcp=["host", "db", "user", "passwd", "table"]
         nfp=[i for i in vcp if i not in self.get_params().keys()]
         if len(nfp)!=0:
-            return nfp[0:] +" is/are null"
+            if len(nfp)>1:
+                return "%s are null"%nfp[0:]
+            else:
+                return "%s is null"%nfp[0]
         return "Wrong Config of Conn "+ "\n 'getconfig' to look your config "
         
     def toString(self):
