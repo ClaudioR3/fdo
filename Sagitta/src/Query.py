@@ -36,10 +36,10 @@ class Query:
         return nameDefined
     
     def is_alias(self,name):
-        map=self.alias.get_params()
-        for k in map:
-            if map[k]==name:
-                return k
+        with self.alias.get_params() as alias_map:
+            for k in alias_map:
+                if alias_map[k]==name:
+                    return k
         return ""
         
     def build_where(self,args):
@@ -144,7 +144,10 @@ class Query:
         return -1
         
     def get_url(self):
-        return self.dblink.get_url()
+        return self.dblink.get_doc().get_parameter("url")
+    
+    def get_path(self):
+        return self.dblink.get_doc().get_parameter("path")
         
     def find_conn_probls(self):
         return self.dblink.find_conn_probls()

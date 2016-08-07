@@ -1,6 +1,0 @@
-1;MED-11_ECMWF-ERAINT_evaluation_r1i1p1_CNRM-ALADIN52_v1
-2;MED-44_ECMWF-ERAINT_evaluation_r1i1p1_LMD-LMDZ4_v1
-3;MED-44_ECMWF-ERAINT_evaluation_r1i1p1_LMD-LMDZ4NEMOMED8_v1
-4;MED-44_ECMWF-ERAINT_evaluation_r1i1p1_CNRM-ALADIN52_v1
-5;MED-44_ECMWF-ERAINT_evaluation_r1i1p1_GUF-CCLM4-8-18_v1
-query;select * from MEDCORDEX where variablename = 'tas' and Frequency = '3hr'

@@ -1,5 +1,0 @@
-db;medcordex
-host;localhost
-passwd;@@Cloud24
-table;MEDCORDEX
-user;root

@@ -1,5 +1,6 @@
-db;medcordex 
-host;localhost
 passwd;@@Cloud24
-table;MEDCORDEX
+db;medcordex
+host;localhost
 user;root
+path;/home/claudio/Scaricati/NetCDF/
+table;MEDCORDEX

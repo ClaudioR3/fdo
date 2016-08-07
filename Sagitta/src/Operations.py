@@ -4,16 +4,21 @@ Created on Jul 29, 2016
 @author: claudio
 '''
 from Query import Query
+from Observer import *
 import sys
 class Operation:
     def __init__(self, args=[]):
         self.args=args
+        self.subscribers=[]
         
     def run(self,q=Query()):
         raise "Metodo Astratto"
     
     def set_args(self,args):
         self.args=args
+    
+    def set_subscribers(self,subscribers):
+        self.subscribers=subscribers
         
     def args_to_map(self,lista):
         args={}
@@ -168,11 +173,31 @@ class SelectrowOperation(Operation):
             new_query+=" dataset = '%s'"%dataset_name
         new_query+=")"
         return new_query
+    
+class DownloadOperation(Operation):
+    def __init__(self,args=[]):
+        Operation.__init__(self, args)
+        
+    def run(self,q=Query()):
+        #download any files in path
+        path=q.get_path()
+        if path=="":
+            path=os.path.dirname(os.path.abspath(__file__))+"/Download/"
+        nc_dl=NC_download()
+        for s in self.subscribers:
+            nc_dl.register(s)
+        for i in q.send_query(q.get_last_query()):
+            url=q.get_url()+i[int(q.get_index("fname"))]
+            try:
+                nc_dl.download(url,path)
+            except:
+                raise "Downloading is failed"
+        return "Done...Downloading is complete"
         
 class HelpOperation(Operation):
     def __init__(self,args=[]):
         Operation.__init__(self, args)
-        self.lista=["help","find","describe","config","getconfig","delconfig","wget","selectrow"]
+        self.lista=["help","find","describe","config","getconfig","delconfig","wget","selectrow","download"]
         
     def run(self,q=Query()):
         # @return: list of operations 

@@ -9,6 +9,7 @@ from OperationFactory import *
 
 #initialization
 q=Query()
+s=Subscriber("Terminal")
 # create and perform the operation
-op=OperationFactory().find_op()
+op=OperationFactory().find_op([s])
 print op.run(q)

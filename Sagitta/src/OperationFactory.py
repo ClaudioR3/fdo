@@ -3,13 +3,12 @@ Created on Jul 29, 2016
 
 @author: claudio
 '''
-import sys
 from Operations import *
 class OperationFactory:
     def __init__(self):
         pass
     
-    def find_op(self):
+    def find_op(self,subscribers):
         op=Operation()
         #list of argoments by python
         args=self.definisci_args()
@@ -36,10 +35,13 @@ class OperationFactory:
             op=WgetOperation()
         elif operazione=="selectrow":
             op=SelectrowOperation()
+        elif operazione=="download":
+            op=DownloadOperation()
         elif operazione=="help":
             op=HelpOperation()
         else:
             op=NotOperation()
+        op.set_subscribers(subscribers)
         op.set_args(args[2:])
         return op
 
