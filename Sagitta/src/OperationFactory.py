@@ -37,6 +37,8 @@ class OperationFactory:
             op=SelectrowOperation()
         elif operazione=="download":
             op=DownloadOperation()
+        elif operazione=="open":
+            op=OpenOperation()
         elif operazione=="help":
             op=HelpOperation()
         else:

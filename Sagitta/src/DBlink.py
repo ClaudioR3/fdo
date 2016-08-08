@@ -11,35 +11,39 @@ class DBlink:
     '''
     
     def __init__(self):
-        self.doc=Document("config.txt")
+        self.config=Document("config.txt")
         
-    def config(self,params):
-        self.doc.update(params)
+    def set_config(self,params):
+        self.config.update(params)
     
     def get_config_toString(self):
-        return self.doc.toString()
+        return self.config.toString()
     
     def del_config(self):
-        self.doc.delete()
+        self.config.delete()
         
     def get_doc(self):
-        return self.doc
+        return self.config
     
     def get_cursore(self):
-        database=MySQLdb.connect(host=self.doc.get_parameter("host"),
-                                 user=self.doc.get_parameter("user"),
-                                 passwd=self.doc.get_parameter("passwd"),
-                                 db=self.doc.get_parameter("db"))
+        database=MySQLdb.connect(host=self.config.get_parameter("host"),
+                                 user=self.config.get_parameter("user"),
+                                 passwd=self.config.get_parameter("passwd"),
+                                 db=self.config.get_parameter("db"))
         return database.cursor()
     
     def get_table(self):
-        return self.doc.get_parameter("table")
+        return self.config.get_parameter("table")
     
     def get_db(self):
-        return self.doc.get_parameter("db")
+        return self.config.get_parameter("db")
     
     def get_url(self):
-        return "ftp://"+self.doc.get_parameter("user")+":"+self.doc.get_parameter("passwd")+"@"+self.doc.get_parameter("host")+"/ALL/"
+        url= self.config.get_parameter("url")
+        if url=="":
+            if self.config.get_parameter("host")=="www.medcordex.eu":
+                url="ftp://"+self.config.get_parameter("user")+":"+self.config.get_parameter("passwd")+"@"+self.config.get_parameter("host")+"/ALL/"
+        return url
         
     def send_query(self,query):
         cursore=self.get_cursore()
@@ -51,5 +55,5 @@ class DBlink:
             self.get_cursore()
             return "Table Problem \n you can do 'config -table TABLE' to define table"
         except:
-            return self.doc.verif_conn_params()
+            return self.config.verif_conn_params()
         

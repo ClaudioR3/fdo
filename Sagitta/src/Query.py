@@ -21,7 +21,7 @@ class Query:
         self.alias=Document("alias.txt")
         
         
-    def confronta(self,n1,n2):
+    def compare(self,n1,n2):
         n1=str.lower(n1)
         n2=str.lower(n2)
         return n1==n2
@@ -29,28 +29,32 @@ class Query:
     def is_defined(self,name,describe):
         nameDefined=""
         for camp in describe:
-            if self.confronta(name,camp):
+            if self.compare(name,camp):
                 nameDefined=name
         if nameDefined=="":
             nameDefined=self.is_alias(name)
         return nameDefined
     
     def is_alias(self,name):
-        with self.alias.get_params() as alias_map:
-            for k in alias_map:
-                if alias_map[k]==name:
-                    return k
+        alias_map=self.alias.get_params()
+        for k in alias_map:
+            if alias_map[k]==name:
+                return k
         return ""
         
     def build_where(self,args):
+        #build where of query
         s=""
         describe=self.do_describe()
         for name in args.keys():
+            #nameDefined is the name of camp build by describe or alias
             nameDefined=self.is_defined(name,describe)
             if nameDefined!="":
                 if s!="":
                     s+=" and"
                 s+= " "+nameDefined+" = '"+args[name]+"'"
+            else:
+                raise Exception("error camp name")
         if s!="":
             s=" where"+s
         return s
@@ -91,13 +95,14 @@ class Query:
         i=0
         tot_files=0
         tot_size=0
-        s+="row %69s %13s %14s\n"%("FILE NAME","N FILES","N MBs")
-        for d in datasets:
-            i+=1
-            tot_files+=datasets[d][0]
-            tot_size+=datasets[d][1]
-            s+= "%02d %70s : %5d files %10.2f MB \n"%(i,d,datasets[d][0],datasets[d][1])
-        return "\nFinded "+str(tot_files)+" files in " +str(i)+" Datasets, total size "+str(tot_size)+"MB\n\n"+s
+        if len(datasets)!=0:
+            s+="row %69s %13s %14s\n"%("FILE NAME","N FILES","N MBs")
+            for d in datasets:
+                i+=1
+                tot_files+=datasets[d][0]
+                tot_size+=datasets[d][1]
+                s+= "%02d %70s : %5d files %10.2f MB \n"%(i,d,datasets[d][0],datasets[d][1])
+        return "\nFound "+str(tot_files)+" files in "+str(i)+" Datasets, total size "+str(tot_size)+"MB\n\n"+s
         
     def do_query(self,args):
         query="select * from "+self.dblink.get_table()+self.build_where(args)
@@ -116,7 +121,7 @@ class Query:
         return self.dblink.get_config_toString()
     
     def config_dblink(self,params):
-        self.dblink.config(params)
+        self.dblink.set_config(params)
         
     def del_config(self):
         self.dblink.del_config()
@@ -144,7 +149,7 @@ class Query:
         return -1
         
     def get_url(self):
-        return self.dblink.get_doc().get_parameter("url")
+        return self.dblink.get_url()
     
     def get_path(self):
         return self.dblink.get_doc().get_parameter("path")

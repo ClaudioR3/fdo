@@ -5,6 +5,7 @@ Created on Jul 29, 2016
 '''
 from Query import Query
 from Observer import *
+from netCDF4 import Dataset
 import sys
 class Operation:
     def __init__(self, args=[]):
@@ -19,6 +20,10 @@ class Operation:
     
     def set_subscribers(self,subscribers):
         self.subscribers=subscribers
+        
+    def dispatch(self,message):
+        for s in self.subscribers:
+            s.update(message)
         
     def args_to_map(self,lista):
         args={}
@@ -43,7 +48,9 @@ class FindOperation(Operation):
         try :
             #do query with a map of args -> args_map={camp of database: value of camp}
             return q.tupla_toString(q.do_query(self.args_to_map(self.args))) 
-        except:
+        except Exception as e:
+            return e
+        else:
             return q.find_conn_probls()
 
 class DescribeOperation(Operation):
@@ -182,17 +189,45 @@ class DownloadOperation(Operation):
         #download any files in path
         path=q.get_path()
         if path=="":
+            #this path
             path=os.path.dirname(os.path.abspath(__file__))+"/Download/"
         nc_dl=NC_download()
+        #publisher registers the subscribers
         for s in self.subscribers:
             nc_dl.register(s)
+        url=q.get_url()
+        name_index=q.get_index("fname")
+        size_index=q.get_index("size")
         for i in q.send_query(q.get_last_query()):
-            url=q.get_url()+i[int(q.get_index("fname"))]
+            tmp_url=url+i[name_index]
             try:
-                nc_dl.download(url,path)
-            except:
-                raise "Downloading is failed"
+                nc_dl.download(url=tmp_url,path=path,filesize=i[size_index]*1024*1024)
+            except :
+                self.dispatch("Downloading is failed\n")
         return "Done...Downloading is complete"
+    
+class OpenOperation(Operation):
+    def __init__(self,args=[]):
+        Operation.__init__(self, args)
+    
+    def run(self,q=Query()):
+        #list of file names
+        file_names=[i.split('/')[-1] for i in self.args ]
+        path=q.get_path()
+        if path=="":
+            path=os.path.dirname(os.path.abspath(__file__))+"/Download/"
+        for file_name in file_names:
+            self.dispatch(self.open(path,file_name))
+        return ""
+        
+    def open(self,path="",file_name=""):
+        #open file in path and return all dimensions and all variables
+        nc=Dataset(os.path.join(path,file_name),'r')
+        string="\nFILENAME: "+file_name+"\n\t Dimensions: "
+        for d in nc.dimensions.keys(): string+=d+" "
+        string+="\n\t Variables: "
+        for v in nc.variables.keys(): string+=v+" "
+        return string+"\n"
         
 class HelpOperation(Operation):
     def __init__(self,args=[]):

@@ -28,27 +28,30 @@ class NC_download(Publisher):
     def __init__(self):
         Publisher.__init__(self)
     
-    def download(self,url="",path=""):
+    def download(self,url="",path="",filesize=-1):
+        #size(filesize)=MB
         file_name=url.split('/')[-1]
-        filename="10MB.zip"
-        url="http://download.thinkbroadband.com/"+filename
         try:
             u=urllib2.urlopen(url)
         except:
-            #if python hasn't permissions
-            req=urllib2.Request(url,headers={'User-Agent':"Magic Browser"})
+            #TO Do
+            req=""
             u=urllib2.urlopen(req)
-        else:
-            raise "Problems"
         #check path
         if not os.path.exists(path):
             os.makedirs(path)
         #new file=file_name in path
         f=open(os.path.join(path,file_name),'wb')
-        meta=u.info()
-        filesize=int(meta.getheaders("Content-Length")[0])
-        self.dispatch("Downloading: %s MBs: %s\n"%(file_name,filesize/1000000))
-
+        if filesize==-1:
+            try:
+                meta=u.info()
+                #When the method is HTTP
+                filesize=int(meta.getheaders("Content-Length")[0])
+            except:
+                self.dispatch("problems on size of file :\n")
+                #filesize = casual number (never mind)
+                filesize=1
+        self.dispatch("Downloading: %s      MBs: %10.2f \n"%(file_name,filesize/1024/1024))
         filesize_dl=0
         block_sz=8192
         while True:
@@ -58,7 +61,7 @@ class NC_download(Publisher):
             filesize_dl+=len(b_buffer)
             f.write(b_buffer)
         
-            status=r"%10.1f MB  [%3.1f%%]"%(filesize_dl/1000000,filesize_dl*100/filesize)
+            status=r"%10.1f MB  [%3.1f%%]"%(filesize_dl/1024/1024,filesize_dl*100.0/filesize)
             status=status+chr(8)*(len(status)+1)
             self.dispatch(status)
         f.close()
