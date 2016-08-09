@@ -4,71 +4,24 @@ Created on Jul 29, 2016
 @author: claudio
 '''
 from Operations import *
-class OperationFactory:
-    def __init__(self):
-        pass
-    
-    def find_op(self,subscribers):
-        op=Operation()
-        #list of argoments by python
-        args=self.definisci_args()
-        if len(args)>1:
-            #first argoment must be the operation to do
-            operazione=args[1]  
-        else :
-            operazione=""
-
-        if operazione=="":
-            #case operation null  
-            op=NotOperation()
-        elif operazione=="find": 
-            op=FindOperation()
-        elif operazione=="describe":
-            op=DescribeOperation()
-        elif operazione=="config":
-            op=ConfigOperation()
-        elif operazione=="getconfig":
-            op=GetconfigOperation()
-        elif operazione=="delconfig":
-            op=DelconfigOperation()
-        elif operazione=="wget":
-            op=WgetOperation()
-        elif operazione=="selectrow":
-            op=SelectrowOperation()
-        elif operazione=="download":
-            op=DownloadOperation()
-        elif operazione=="open":
-            op=OpenOperation()
-        elif operazione=="help":
-            op=HelpOperation()
-        else:
-            op=NotOperation()
-        op.set_subscribers(subscribers)
-        op.set_args(args[2:])
-        return op
-
-    def definisci_args(self):
-        risultato=[]
-        for arg in sys.argv:
-            risultato.append(arg)
-        return risultato
-
+import sys
 class ReflectionOperationFactory:
     def __init__(self):
         pass
     
-    def find_op(self):
-        
+    def find_op(self,subscribers):
             args=self.definisci_args()
-            if len(args)>1:
-                #first argoment must be the operation to do
-                op=args[1]  
-            else :
+            try:
+                op=args[1]
+                op_name="Operations."+str.upper(op[0])+str.lower(op[1:])+"Operation"
+                the_class = self.my_import(op_name)
+                objecT=the_class()
+                objecT.set_args(args[2:])
+                for subscriber in subscribers:
+                    objecT.register(subscriber)
+                return objecT
+            except():
                 return NotOperation()
-            op_name="Operations."+str.upper(op[0])+str.lower(op[1:])+"Operation"
-            the_class = self.my_import(op_name)
-            the_class.set_args(self.riempiArgs(args[2:]))
-            return the_class
         
     def my_import(self,name):
         components = name.split('.')
@@ -76,21 +29,6 @@ class ReflectionOperationFactory:
         for comp in components[1:]:
             mod = getattr(mod, comp)
         return mod
-    
-    def riempiArgs(self,lista):
-        args={}
-        i=0
-        key=""
-        for arg in sys.argv:
-            if i>1:
-                if arg[0]=='-':
-                    key=arg[1:]
-            else :
-                if key!="":
-                    args[key]=arg
-                    key=""
-            i+=1
-        return args
 
     def definisci_args(self):
         risultato=[]
