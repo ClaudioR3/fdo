@@ -8,8 +8,7 @@ class Subscriber:
     def __init__(self,name):
         self.name=name
     def update(self,message):
-        if self.name=="Terminal":
-            print message,
+        print message,
 
 class Publisher:
     def __init__(self):

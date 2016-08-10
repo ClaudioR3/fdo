@@ -13,6 +13,7 @@ class Operation(Publisher):
     def __init__(self, args=[]):
         Publisher.__init__(self)
         self.args=args
+        self.default_path=os.path.dirname(os.path.abspath(__file__))+"/Download/"
     
     def run(self,q=Query()):
         raise "Metodo Astratto"
@@ -41,8 +42,26 @@ class FindOperation(Operation):
         
     def run(self,q=Query()):
         try :
+            opt=0
+            if self.args.count("--oneline")==1:
+                self.args.remove("--oneline")
+                opt=1
+            elif self.args.count("--d")==1:
+                self.args.remove("--d")
+                opt=2
+                
             #do query with a map of args -> args_map={camp of database: value of camp}
-            self.dispatch(q.tupla_toString(q.do_query(self.args_to_map(self.args)))) 
+            table=q.tupla_toString(q.do_query(self.args_to_map(self.args)))
+            if opt==1:
+                #dispatch only the first line (line[0] is empty)
+                self.dispatch(table.split('\n')[1])
+            elif opt==2:
+                #dispatch only dataset of table
+                #TODO
+                self.dispatch("TODO")
+            else:
+                #dispatch table in the format of tupla_toString()
+                self.dispatch(table) 
         except Exception as e:
             self.dispatch(e)
             #self.dispatch(q.find_conn_probls())
@@ -175,7 +194,7 @@ class SelectrowOperation(Operation):
         new_query+=")"
         return new_query
     
-class DownloadOperation(Operation,Publisher):
+class DownloadOperation(Operation):
     def __init__(self,args=[]):
         Operation.__init__(self, args)
         
@@ -184,31 +203,28 @@ class DownloadOperation(Operation,Publisher):
         path=q.get_path()
         if path=="":
             #this path
-            path=os.path.dirname(os.path.abspath(__file__))+"/Download/"
+            path=self.default_path
         url=q.get_url()
         name_index=q.get_index("fname")
         size_index=q.get_index("size")
-        #full_size=self.calc_full_size(last_query,size_index)
-        #cont_size=0
+        files_list=[]
         for i in q.send_query(q.get_last_query()):
+            files_list.append(path+i[name_index])
             tmp_url=url+i[name_index]
-            #cont_size+=i[size_index]
             try:
-                #status=r"Status Download: %10.2f/%10.2f MB  [%3.1f%%]"%(cont_size,full_size,cont_size*100.0/full_size)
-                #status=status+chr(8)*(len(status)+1)
-                #self.dispatch(status)
                 self.download(url=tmp_url,path=path,filesize=i[size_index]*1024*1024)
-            except :
+            except ():
                 self.dispatch("Downloading is failed\n")
                 break
-        return "Done...Downloading is complete"
-    
-    def calc_full_size(self,tupla,size_index=0):
-        tot=0
-        for i in tupla:
-            tot+=i[size_index]
-        return tot
-    
+        self.dispatch( "\nDone...Downloading is complete")
+        #create and run 'open' operation
+        if self.args.count("open")==1:
+            open_op=OpenOperation()
+            open_op.set_args(files_list)
+            open_op.subscribers=self.subscribers
+            open_op.run(q)
+            
+            
     def download(self,url="",path="",filesize=-1):
         #size(filesize)=MB
         file_name=url.split('/')[-1]
@@ -235,7 +251,7 @@ class DownloadOperation(Operation,Publisher):
                 self.dispatch("problems on size of file \n")
                 #filesize = casual number (never mind)
                 filesize=1
-        self.dispatch("Downloading: %s "%(file_name,filesize/1024/1024))
+        self.dispatch("\nDownloading: %s"%file_name)
         filesize_dl=0
         block_sz=8192
         while True:
@@ -244,31 +260,71 @@ class DownloadOperation(Operation,Publisher):
                 break
             filesize_dl+=len(b_buffer)
             f.write(b_buffer)
-            status=r" %10.2f/%10.2f MB  [%3.1f%%]"%(file_name,filesize_dl/1024.0/1024,filesize/1024/1024,filesize_dl*100.0/filesize)
+            status=r" %10.2f/%10.2f MB  [%3.1f%%]"%(filesize_dl/1024.0/1024,filesize/1024/1024,filesize_dl*100.0/filesize)
             status=status+chr(8)*(len(status)+1)
             self.dispatch(status,)
         f.close()
     
-class OpenOperation(Operation,Publisher):
+class OpenOperation(Operation):
     def __init__(self,args=[]):
         Operation.__init__(self, args)
     
     def run(self,q=Query()):
-        #list of file names
-        file_names=[i.split('/')[-1] for i in self.args ]
-        path=q.get_path()
-        if path=="":
-            path=os.path.dirname(os.path.abspath(__file__))+"/Download/"
-        for file_name in file_names:
-            self.open(path,file_name)
-        
-    def open(self,path="",file_name=""):
-        #open file in path and return all dimensions and all variables
+        if len(self.args)==0 or (len(self.args)==1 and self.args[0]=="--oneline"):
+            self.dispatch("At least one argoment: 'path/filename.nc' or '--all'")
+            return
+        try:
+            oneline_opt=False
+            if self.args.count("--oneline")==1:
+                oneline_opt=True
+                self.args.remove("--oneline")
+            if self.args.count("--all")==1:
+                self.args.remove("--all")
+                if len(self.args)==0:
+                    self.args.append(self.default_path)
+                for p in self.args:
+                    #check files.nc
+                    files=self.check_files_nc(p)
+                    for f in files:
+                        self.open(p,f,oneline_opt)
+            else:
+                for a in self.args:
+                    path=""
+                    file_name=""
+                    l=a.split('/')
+                    file_name=l.pop()
+                    if len(l)!=0:
+                        for e in l:
+                            path+=e+"/"
+                        self.open(path,file_name,oneline_opt)
+        except Exception as exc:
+            self.dispatch(exc)
+
+    def check_files_nc(self,path):
+        l=[]
+        for f in os.listdir(path):
+            if f.endswith(".nc"):
+                l.append(f)
+        return l
+            
+    def open(self,path="",file_name="",oneline_opt=False):
         nc=Dataset(os.path.join(path,file_name),'r')
-        string="\nFILENAME: "+file_name+"\n\t Dimensions: "
-        for d in nc.dimensions.keys(): string+=d+" "
-        string+="\n\t Variables: "
-        for v in nc.variables.keys(): string+=v+" "
+        if oneline_opt:
+            #case one line option
+            d=""
+            for dim in nc.dimensions.keys(): d+=dim+" "
+            v=""
+            for var in nc.variables.keys(): v+=var+" "
+            #try to print all info of file.nc in only one line
+            string=file_name+"\t D("+str(len(nc.dimensions.keys()))+"): "+d+"\t V("+str(len(nc.variables.keys()))+"): "+v+"\n"
+        else:
+            #open file in path and return all dimensions and all variables
+            string="\nFILENAME: "+file_name+"\n\t Dimensions: "
+            for d in nc.dimensions.keys(): string+=d+" "
+            string+="\n\t Variables: "
+            for v in nc.variables.keys(): string+=v+" "
+            #string+="\n\t Attrib: "
+            #for a in nc.attr: string+=a+" "
         self.dispatch(string)
         
 class HelpOperation(Operation):

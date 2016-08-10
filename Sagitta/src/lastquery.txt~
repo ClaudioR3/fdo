@@ -1,2 +1,0 @@
-query;select * from MEDCORDEX where( dataset = 'MED-11_ECMWF-ERAINT_evaluation_r1i1p1_UCLM-PROMES_v1' || dataset = 'MED-44_MPI-ESM-LR_rcp45_r1i1p1_GUF-CCLM4-8-18_v1') and( dataset = 'MED-11_ECMWF-ERAINT_evaluation_r1i1p1_UCLM-PROMES_v1' || dataset = 'MED-44_MPI-ESM-LR_rcp45_r1i1p1_GUF-CCLM4-8-18_v1') and( dataset = 'MED-11_ECMWF-ERAINT_evaluation_r1i1p1_UCLM-PROMES_v1')
-1;MED-11_ECMWF-ERAINT_evaluation_r1i1p1_UCLM-PROMES_v1

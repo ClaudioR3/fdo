@@ -20,11 +20,8 @@ class ReflectionOperationFactory:
                 for subscriber in subscribers:
                     objecT.register(subscriber)
                 return objecT
-            except:
-                n_op=NotOperation()
-                for subscriber in subscribers:
-                    n_op.register(subscriber)
-                return n_op
+            except():
+                return NotOperation()
         
     def my_import(self,name):
         components = name.split('.')
