@@ -17,13 +17,11 @@ class ReflectionOperationFactory:
                 the_class = self.my_import(op_name)
                 objecT=the_class()
                 objecT.set_args(args[2:])
-                for subscriber in subscribers:
-                    objecT.register(subscriber)
+                objecT.subscribers=subscribers
                 return objecT
             except:
                 n_op=NotOperation()
-                for subscriber in subscribers:
-                    n_op.register(subscriber)
+                n_op.subscribers=subscribers
                 return n_op
         
     def my_import(self,name):

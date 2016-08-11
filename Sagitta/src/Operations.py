@@ -22,19 +22,16 @@ class Operation(Publisher):
         self.args=args
         
     def args_to_map(self,l):
-        args={}
-        i=0
+        map_of_args={}
         key=""
         for arg in l:
-            if i>1:
-                if arg[0]=='-':
-                    key=arg[1:]
-                else :
-                    if key!="":
-                        args[key]=arg
-                        key=""
-            i+=1
-        return args
+            if arg[0]=='-':
+                key=arg[1:]
+            else :
+                if key!="":
+                    map_of_args[key]=arg
+                    key=""
+        return map_of_args
     
 class FindOperation(Operation):
     def __init__(self,args=[]):
@@ -57,8 +54,8 @@ class FindOperation(Operation):
                 self.dispatch(table.split('\n')[1])
             elif opt==2:
                 #dispatch only dataset of table
-                #TODO
-                self.dispatch("TODO")
+                for elem in table.split('\n')[4:]:
+                    self.dispatch(elem.split(':')[0]+"\n")
             else:
                 #dispatch table in the format of tupla_toString()
                 self.dispatch(table) 
@@ -86,7 +83,6 @@ class ConfigOperation(Operation):
     def run(self,q=Query()):
         #configure connection data
         q.config_dblink(self.args_to_map(self.args))
-        self.dispatch("")
         
 class GetconfigOperation(Operation):
     def __init__(self,args=[]):
@@ -154,7 +150,7 @@ class SelectrowOperation(Operation):
         try:
             if len(self.args)==0: self.dispatch("At least one row")
             if self.is_int_and_uniq(self.args)==True: 
-                self.dispatch( len(q.send_query(self.build_new_query(q))))
+                self.dispatch( q.tupla_toString(q.send_query(self.build_new_query(q))))
         except ValueError as te:
             self.dispatch( "%s is not int"%te[0])
         except SyntaxError as se:
@@ -212,20 +208,27 @@ class DownloadOperation(Operation):
             files_list.append(path+i[name_index])
             tmp_url=url+i[name_index]
             try:
-                self.download(url=tmp_url,path=path,filesize=i[size_index]*1024*1024)
-            except ():
-                self.dispatch("Downloading is failed\n")
-                break
-        self.dispatch( "\nDone...Downloading is complete")
+                if len(self.args)>0:
+                    if self.args[0]=="--all":
+                        self.args.remove("--all")
+                        self.download(url=tmp_url,path=path,filesize=i[size_index]*1024*1024)
+                else:
+                    self.dispatch("Downloading #TODO",)
+                    self.download(url=tmp_url,path=path,filesize=i[size_index]*1024*1024,show_status=False)
+            except Exception as e:
+                self.dispatch(e)
+        self.dispatch( "\nDone...Downloading is complete\n")
         #create and run 'open' operation
         if self.args.count("open")==1:
+            self.args.remove("open")
+            files_list.extend(self.args)
             open_op=OpenOperation()
             open_op.set_args(files_list)
             open_op.subscribers=self.subscribers
             open_op.run(q)
             
             
-    def download(self,url="",path="",filesize=-1):
+    def download(self,url="",path="",filesize=-1,show_status=True):
         #size(filesize)=MB
         file_name=url.split('/')[-1]
         try:
@@ -251,19 +254,24 @@ class DownloadOperation(Operation):
                 self.dispatch("problems on size of file \n")
                 #filesize = casual number (never mind)
                 filesize=1
-        self.dispatch("\nDownloading: %s"%file_name)
-        filesize_dl=0
-        block_sz=8192
-        while True:
-            b_buffer=u.read(block_sz)
-            if not b_buffer:
-                break
-            filesize_dl+=len(b_buffer)
-            f.write(b_buffer)
-            status=r" %10.2f/%10.2f MB  [%3.1f%%]"%(filesize_dl/1024.0/1024,filesize/1024/1024,filesize_dl*100.0/filesize)
-            status=status+chr(8)*(len(status)+1)
-            self.dispatch(status,)
-        f.close()
+        if show_status:
+            self.dispatch("\nDownloading: %s"%file_name)
+            filesize_dl=0
+            block_sz=8192
+            while True:
+                b_buffer=u.read(block_sz)
+                if not b_buffer:
+                    break
+                filesize_dl+=len(b_buffer)
+                f.write(b_buffer)
+                status=r" %10.2f/%10.2f MB  [%3.1f%%]"%(filesize_dl/1024.0/1024,filesize/1024/1024,filesize_dl*100.0/filesize)
+                status=status+chr(8)*(len(status)+1)
+                self.dispatch(status,)
+            f.close()
+        else:
+            r=u.read()
+            f.write(r)
+            f.close()
     
 class OpenOperation(Operation):
     def __init__(self,args=[]):
