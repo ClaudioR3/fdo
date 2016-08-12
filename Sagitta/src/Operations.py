@@ -196,36 +196,31 @@ class DownloadOperation(Operation):
         
     def run(self,q=Query()):
         #download any files in path
-        path=q.get_path()
-        if path=="":
-            #this path
-            path=self.default_path
-        url=q.get_url()
+        #inizialization
         name_index=q.get_index("fname")
         size_index=q.get_index("size")
         files_list=[]
+        all_opt=False
+        if len(self.args)>0:
+            if self.args[0]=="--all":
+                all_opt=True
+                self.args.remove("--all")
+        path=q.get_path()
+        if path=="":
+            path=self.default_path
+        url=q.get_url()
         for i in q.send_query(q.get_last_query()):
             files_list.append(path+i[name_index])
             tmp_url=url+i[name_index]
             try:
-                if len(self.args)>0:
-                    if self.args[0]=="--all":
-                        self.args.remove("--all")
-                        self.download(url=tmp_url,path=path,filesize=i[size_index]*1024*1024)
-                else:
+                if not all_opt:
                     self.dispatch("Downloading #TODO",)
-                    self.download(url=tmp_url,path=path,filesize=i[size_index]*1024*1024,show_status=False)
+                self.download(url=tmp_url,path=path,filesize=i[size_index]*1024*1024,show_status=all_opt)
             except Exception as e:
                 self.dispatch(e)
         self.dispatch( "\nDone...Downloading is complete\n")
-        #create and run 'open' operation
-        if self.args.count("open")==1:
-            self.args.remove("open")
-            files_list.extend(self.args)
-            open_op=OpenOperation()
-            open_op.set_args(files_list)
-            open_op.subscribers=self.subscribers
-            open_op.run(q)
+        #check if 'open' is in argoments of 'download'
+        self.check_open_operation(q,files_list)
             
             
     def download(self,url="",path="",filesize=-1,show_status=True):
@@ -261,6 +256,10 @@ class DownloadOperation(Operation):
             while True:
                 b_buffer=u.read(block_sz)
                 if not b_buffer:
+                    #with this last dispatch, we fix the 'not 100%' bug when download is complete
+                    status=r" %10.2f/%10.2f MB  [%3.1f%%]"%(filesize_dl/1024.0/1024,filesize/1024/1024,filesize*100.0/filesize)
+                    status=status+chr(8)*(len(status)+1)
+                    self.dispatch(status,)
                     break
                 filesize_dl+=len(b_buffer)
                 f.write(b_buffer)
@@ -273,6 +272,16 @@ class DownloadOperation(Operation):
             f.write(r)
             f.close()
     
+    def check_open_operation(self,q,files_list):
+        #create and run 'open' operation
+        if "open" in self.args:
+            self.args.remove("open")
+            files_list.extend(self.args)
+            open_op=OpenOperation()
+            open_op.set_args(files_list)
+            open_op.subscribers=self.subscribers
+            open_op.run(q)
+    
 class OpenOperation(Operation):
     def __init__(self,args=[]):
         Operation.__init__(self, args)
@@ -280,13 +289,13 @@ class OpenOperation(Operation):
     def run(self,q=Query()):
         if len(self.args)==0 or (len(self.args)==1 and self.args[0]=="--oneline"):
             self.dispatch("At least one argoment: 'path/filename.nc' or '--all'")
-            return
+            break
         try:
             oneline_opt=False
-            if self.args.count("--oneline")==1:
+            if "--oneline" in self.args:
                 oneline_opt=True
                 self.args.remove("--oneline")
-            if self.args.count("--all")==1:
+            if "--all" in self.args:
                 self.args.remove("--all")
                 if len(self.args)==0:
                     self.args.append(self.default_path)
