@@ -124,7 +124,7 @@ class WgetOperation(Operation):
                     self.dispatch("Element after 'wget' is unknown")
             else:
                 self.dispatch(self.wget(q))
-        except:
+        except :
             return q.find_conn_probls()
         
     def wget(self,q):
@@ -136,10 +136,9 @@ class WgetOperation(Operation):
             self.dispatch("No 'fname' camp in database")
         try : 
             for a in q.send_query(q.get_last_query()):
-                s+="wget "+url+a[index_fname]
-                s+="\n"
-            self.dispatch(s)
-        except():
+                s+="\nwget "+url+a[index_fname]
+            return s
+        except ():
             self.dispatch("Last Query not founded or Wrong Config Data")
         
 class SelectrowOperation(Operation):
@@ -289,7 +288,7 @@ class OpenOperation(Operation):
     def run(self,q=Query()):
         if len(self.args)==0 or (len(self.args)==1 and self.args[0]=="--oneline"):
             self.dispatch("At least one argoment: 'path/filename.nc' or '--all'")
-            break
+            return 
         try:
             oneline_opt=False
             if "--oneline" in self.args:
@@ -315,6 +314,7 @@ class OpenOperation(Operation):
                             path+=e+"/"
                         self.open(path,file_name,oneline_opt)
         except Exception as exc:
+            self.dispatch("\n")
             self.dispatch(exc)
 
     def check_files_nc(self,path):
