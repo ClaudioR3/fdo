@@ -52,8 +52,8 @@ class Document:
         self.params=params
     
     def get_parameter(self,key):
-        if self.get_params().has_key(key):
-            return self.get_params()[key]
+        if key in self.params:
+            return self.params[key]
         return ""
     
     def verif_conn_params(self):
@@ -73,3 +73,29 @@ class Document:
         for k in keyset :
             s+= k+" = "+self.get_params()[k]+" \n"  
         return s
+    
+class KL_Document(Document):
+    '''
+    This class is different than simple Document class because 
+    it must read like map={key:[list]} by 'name'.txt
+    '''
+    def __init__(self,name):
+        #initialization of super-class
+        Document.__init__(self, name)
+        
+    def read(self):
+        #self.params= a map like {key:[list]}
+        try:
+            doc= open(self.name, "r").read()
+            p=doc.split("\n")
+            params={}
+            for i in p:
+                lista_riga=i.split(";")
+                for elem in lista_riga[1:]:
+                    if elem!="":
+                        if lista_riga[0] in params:
+                            params[lista_riga[0]].append(elem)
+                        else : params[lista_riga[0]]=[elem]
+            return params
+        except:
+            return self.create_file()   

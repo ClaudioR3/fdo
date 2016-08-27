@@ -220,7 +220,7 @@ class DownloadOperation(Operation):
                 self.download_with_resume(tmp_url,tmp_path,i[size_index])
             except Exception as e:
                 self.dispatch(str(e)+"\n")
-        self.dispatch( "...Done...\t\t...Downloading is complete...\n")
+        self.dispatch( "...Done... Downloading is complete\n")
         
     def build_req(self,url="",headers={}):
         req=urllib2.Request(url)    #build Request

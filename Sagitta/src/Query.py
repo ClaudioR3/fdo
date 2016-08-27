@@ -8,7 +8,8 @@ from Document import *
 
 class Query:
     '''
-    classdocs
+    the aim of this class is to build the query with different info by alias.txt,lastquery.txt and argoments
+    and let DBLink class to send the query to the database
     '''
     
 
@@ -18,7 +19,7 @@ class Query:
         '''
         self.dblink=DBlink()
         self.lastquery=Document("lastquery.txt")
-        self.alias=Document("alias.txt")
+        self.alias=KL_Document("alias.txt")
         
         
     def compare(self,n1,n2):
@@ -38,8 +39,9 @@ class Query:
     def is_alias(self,name):
         alias_map=self.alias.get_params()
         for k in alias_map:
-            if alias_map[k]==name:
-                return k
+            for v in alias_map[k]:
+                if v==name:
+                    return k
         return ""
         
     def build_where(self,args):
@@ -54,7 +56,7 @@ class Query:
                     s+=" and"
                 s+= " "+nameDefined+" = '"+args[name]+"'"
             else:
-                raise Exception("error camp name")
+                raise Exception("error field name: '"+name+"'")
         if s!="":
             s=" where"+s
         return s
