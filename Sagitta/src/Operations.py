@@ -3,8 +3,9 @@ Created on Jul 29, 2016
 
 @author: claudio
 '''
-import urllib2
+import urllib2 
 import os
+#for kb/s
 import time
 from Query import Query
 from Observer import Publisher
@@ -17,7 +18,7 @@ class Operation(Publisher):
         self.default_path=os.path.dirname(os.path.abspath(__file__))+"/Download/"
     
     def run(self,q=Query()):
-        raise "Metodo Astratto"
+        raise "Operation without the core"
     
     def set_args(self,args):
         self.args=args
@@ -33,6 +34,9 @@ class Operation(Publisher):
                     map_of_args[key]=arg
                     key=""
         return map_of_args
+    
+    def description(self):
+        self.dispatch("Operation without description or not founded")
     
 class FindOperation(Operation):
     def __init__(self,args=[]):
@@ -69,13 +73,22 @@ class DescribeOperation(Operation):
         Operation.__init__(self, args)
         
     def run(self,q=Query()):
-        #return all camp name of database
+        #return all fields name of database
         try: 
             s=""    
             for e in q.do_describe(): s+= e+"\n"
             self.dispatch(s)
-        except:
-            self.dispatch(q.find_conn_probls())
+        except Exception as e:
+            self.dispatch(e)
+            #self.dispatch(q.find_conn_probls())
+    
+    def description(self):
+        bold="\33[1m"
+        reset="\33[0;0m"
+        message="\n"+bold+"NAME"+reset+"\n\t sagitta describe\n"
+        message+="\n"+bold+"DESCRIPTION"+reset+"\n\t Describe operation of Sagitta shows all fields of database\n"
+        message+="\n"+bold+"EXAMPLE"+reset+"\n\t sagitta describe :\n\t\t show fields\n\t sagitta describe [field] :\n\t\t show all possible value of 'field'\n"
+        self.dispatch(message)
     
 class ConfigOperation(Operation):
     def __init__(self,args=[]):
@@ -269,7 +282,7 @@ class DownloadOperation(Operation):
         f=open(os.path.join(path,file_name),'ab')
         #start download
         filesize_dl=start_sz
-	#inizialization for kb/s
+        #inizialization for kb/s
         m_sec=int(round(time.time()*1000))      #milliseconds
         velocity=0.0 
         i=0   
@@ -375,6 +388,20 @@ class HelpOperation(Operation):
         self.lista=["help","find","describe","config","getconfig","delconfig","wget","selectrow","download","open"]
         
     def run(self,q=Query()):
+        if len(self.args)==0: self.show_operations()
+        else: self.show_descriptions()
+            
+    def show_descriptions(self):
+        #for help operation
+        from OperationFactory import ReflectionOperationFactory
+        #call description function of operations in args
+        op_fact=ReflectionOperationFactory()
+        for arg in self.args:
+            op_fact.args=["help",arg]
+            op=op_fact.find_op(self.subscribers)
+            op.description()
+        
+    def show_operations(self):
         # @return: list of operations 
         s= "List of operation: \n"
         for elem in self.lista: s+= "'"+elem+"' "

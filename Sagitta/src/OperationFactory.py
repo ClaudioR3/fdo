@@ -3,20 +3,19 @@ Created on Jul 29, 2016
 
 @author: claudio
 '''
-from Operations import *
+from Operations import NotOperation
 import sys
 class ReflectionOperationFactory:
     def __init__(self):
-        pass
+        self.args=self.search_args()
     
     def find_op(self,subscribers):
-            args=self.definisci_args()
             try:
-                op=args[1]
+                op=self.args[1]
                 op_name="Operations."+str.upper(op[0])+str.lower(op[1:])+"Operation"
                 the_class = self.my_import(op_name)
                 objecT=the_class()
-                objecT.set_args(args[2:])
+                objecT.set_args(self.args[2:])
                 objecT.subscribers=subscribers
                 return objecT
             except:
@@ -31,7 +30,7 @@ class ReflectionOperationFactory:
             mod = getattr(mod, comp)
         return mod
 
-    def definisci_args(self):
+    def search_args(self):
         risultato=[]
         for arg in sys.argv:
             risultato.append(arg)
