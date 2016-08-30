@@ -14,6 +14,8 @@ from netCDF4 import Dataset
 class Operation(Publisher):
     def __init__(self, args=[]):
         Publisher.__init__(self)
+        self.bold="\33[1m"
+        self.reset="\33[0;0m"
         self.args=args
         self.default_path=os.path.dirname(os.path.abspath(__file__))+"/Download/"
     
@@ -83,11 +85,9 @@ class DescribeOperation(Operation):
             #self.dispatch(q.find_conn_probls())
     
     def description(self):
-        bold="\33[1m"
-        reset="\33[0;0m"
-        message="\n"+bold+"NAME"+reset+"\n\t sagitta describe\n"
-        message+="\n"+bold+"DESCRIPTION"+reset+"\n\t Describe operation of Sagitta shows all fields of database\n"
-        message+="\n"+bold+"EXAMPLE"+reset+"\n\t sagitta describe :\n\t\t show fields\n\t sagitta describe [field] :\n\t\t show all possible value of 'field'\n"
+        message="\n"+self.bold+"NAME"+self.reset+"\n\t sagitta describe\n"
+        message+="\n"+self.bold+"DESCRIPTION"+self.reset+"\n\t Describe operation of Sagitta shows all fields of database\n"
+        message+="\n"+self.bold+"EXAMPLE"+self.reset+"\n\t sagitta describe :\n\t\t show fields\n\n\t sagitta describe [field] :\n\t\t show all possible value of 'field'\n"
         self.dispatch(message)
     
 class ConfigOperation(Operation):
@@ -97,6 +97,13 @@ class ConfigOperation(Operation):
     def run(self,q=Query()):
         #configure connection data
         q.config_dblink(self.args_to_map(self.args))
+        
+    def description(self):
+        message="\n"+self.bold+"NAME"+self.reset+"\n\t sagitta config [option] [value]\n"
+        message+="\n"+self.bold+"DESCRIPTION"+self.reset+"\n\t Configuration operation of Sagitta allows to set the own connection\n\t to the database and other things. It will save all configuration data\n\t in config.txt\n"
+        message+="\n"+self.bold+"EXAMPLES"+self.reset+"\n\t sagitta config :\n\t\t do nothing\n\n\t sagitta config [option] [value]:\n\t\t set option with value\n\t sagitta config [option1] [value1] [option2] [value2] ...\n\t\t you can add more option and value in the same operation\n"
+        message+="\n"+self.bold+"OPTIONS"+self.reset+"\n\t -user <value>\n\t\tset user name with 'value' to access at the database\n\n\t-passwd <value>\n\t\tset password with 'value' to access at the database\n\n\t-host <value>\n\t\tset host with 'value' to access at the database, if you\n\t\tdon't set the host, it means like 'localhost'\n\n\t-db"
+        self.dispatch(message)
         
 class GetconfigOperation(Operation):
     def __init__(self,args=[]):

@@ -3,20 +3,22 @@ Created on Jul 12, 2016
 
 @author: claudio
 '''
+import os
 
 class Document:
     def __init__(self,name):
         self.name=name
+        self.path=os.path.dirname(os.path.abspath(__file__))
         self.params=self.read()
         
     def create_file(self):
-        doc = open(self.name, "w")
+        doc = open(os.path.join(self.path,self.name), "w")
         doc.close()
         return self.read()
         
     def read(self):
         try:
-            doc= open(self.name, "r").read()
+            doc= open(os.path.join(self.path,self.name), "r").read()
             p=doc.split("\n")
             params={}
             for i in p:
@@ -33,7 +35,7 @@ class Document:
         self.write(self.get_params())
     
     def write(self,params):
-        doc = open(self.name, "w")
+        doc = open(os.path.join(self.path,self.name), "w")
         for p in params.keys():
             riga = "%s;%s\n"%(p,params[p])
             doc.write(riga)
@@ -41,7 +43,7 @@ class Document:
         self.set_params(self.read())
         
     def delete(self):
-        doc = open(self.name, "w")
+        doc = open(os.path.join(self.path,self.name), "w")
         doc.write("")
         doc.close()
     
@@ -86,7 +88,7 @@ class KL_Document(Document):
     def read(self):
         #self.params= a map like {key:[list]}
         try:
-            doc= open(self.name, "r").read()
+            doc= open(os.path.join(self.path,self.name), "r").read()
             p=doc.split("\n")
             params={}
             for i in p:

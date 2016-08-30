@@ -1,0 +1,15 @@
+#!/bin/bash
+#Installer
+
+#Inizialization of 'sagitta' script
+sudo python build_sagitta.py
+
+#Change mode of 'sagitta' script
+sudo chmod 755 sagitta
+
+#Copy bin/sagitta in /usr/bin/ so you can call the program
+#with 'sagitta' call on terminal
+sudo cp sagitta /usr/bin/
+
+#Remove 'sagitta' script
+sudo rm sagitta
