@@ -4,7 +4,7 @@ Created on 01 lug 2016
 @author: claudio
 '''
 from DBlink import DBlink
-from Document import *
+from Document import Document,KL_Document
 
 class Query:
     '''

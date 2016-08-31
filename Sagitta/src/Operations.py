@@ -5,8 +5,6 @@ Created on Jul 29, 2016
 '''
 import urllib2 
 import os
-#for kb/s
-import time
 from Query import Query
 from Observer import Publisher
 from netCDF4 import Dataset
@@ -240,7 +238,7 @@ class DownloadOperation(Operation):
                 self.download_with_resume(tmp_url,tmp_path,i[size_index])
             except Exception as e:
                 self.dispatch(str(e)+"\n")
-        self.dispatch( "...Done...\t\t...Downloading is complete...\n")
+        self.dispatch( "\nDone...Downloading is complete...\n")
         
     def build_req(self,url="",headers={}):
         req=urllib2.Request(url)    #build Request
@@ -248,11 +246,18 @@ class DownloadOperation(Operation):
         for k in headers:
             req.add_header(key=k, val=headers[k])
         return req
+    
+    def compare(self,n1,n2):
+        if n1==n2:
+            return True
+        else:
+            #approximation
+            return "%.2f"%(n1/1024.0/1024)=="%.2f"%(n2/1024.0/1024)
         
     def download_with_resume(self,url="",path="",file_size=0):
-        #size(filesize)=B
+        #download with resume only for http
+        # |file_size|=MB 
         file_name=url.split('/')[-1]
-
         opener=urllib2.build_opener()
         #create the path if not exists
         if not os.path.exists(path):
@@ -267,59 +272,51 @@ class DownloadOperation(Operation):
                 netfile.close()		
             except:
                 raise Exception("Not Found Size")
-        #if already downloaded
-        if start_sz==file_size: 
-            raise Exception("The file was already downloaded")
-        #show if there is 'resume' or 'start' download
-        if start_sz!=0:self.dispatch("Resume of %s: (%.2f/%.2f MB)\n"%(file_name,start_sz/1024.0/1024,file_size/1024.0/1024)) 
-        else:  self.dispatch("Downloading %s \n"%file_name)
-        #initialization download
-        headers={'Range':"bytes=%d-"%start_sz}   #header for resume
-        try:
-            opener=urllib2.build_opener()       #build opener
-            req=self.build_req(url,headers)     #build Request with headers
-            netfile=opener.open(req)
-        except :
-            #if python hasn't permissions
-            headers['User-Agent']="Magic Browser"
-            opener=urllib2.build_opener()       #build opener
-            req=self.build_req(url,headers)     #build Request with headers
-            netfile=opener.open(req)
-        #open file with 'append' mode
-        f=open(os.path.join(path,file_name),'ab')
-        #start download
-        filesize_dl=start_sz
-        #inizialization for kb/s
-        m_sec=int(round(time.time()*1000))      #milliseconds
-        velocity=0.0 
-        i=0   
-        k={}     
-        k[0]=0
-        k[1]=0
-        k[2]=0                 
-        while True:
-            #for kb/s
-            c_time=int(round(time.time()*1000))
-            if c_time>m_sec+333:
-                m_sec=c_time
-                kbit_per_sec=k[0]+k[1]+k[2]
-                velocity=kbit_per_sec/6000.0
-                i+=1
-                if i==3:
-                    i=0
-                k[i]=0
-                
+        #if already download
+        #compare with approximation
+        if self.compare(float(start_sz),float(file_size*1024*1024)): 
+            raise Exception("The file was already download")
+        if start_sz>file_size:
+            raise Exception("The file was already download, but it has more size than real file size")
+        if url.split(':')[0]!="ftp":
+            #case http, with http the program can do resume
+            #show if there is 'resume' or 'start' download
+            if start_sz!=0:self.dispatch("Resume of %s: (%.2f/%.2f MB)"%(file_name,start_sz/1024.0/1024,file_size)) 
+            else:  self.dispatch("Downloading %s "%file_name)
+            #initialization download
+            headers={'Range':"bytes=%d-"%start_sz}   #header for resume
+            try:
+                opener=urllib2.build_opener()       #build opener
+                req=self.build_req(url,headers)     #build Request with headers
+                netfile=opener.open(req)
+            except :
+                #if python hasn't permissions
+                headers['User-Agent']="Magic Browser"
+                opener=urllib2.build_opener()       #build opener
+                req=self.build_req(url,headers)     #build Request with headers
+                netfile=opener.open(req)
+            #open file with 'append' mode
+            f=open(os.path.join(path,file_name),'ab')
+            #start download
+            filesize_dl=start_sz  
+        else:
+            #case ftp, the program can not do resume (now)
+            netfile=urllib2.urlopen(url=url)
+            #open file with 'write' mode
+            f=open(os.path.join(path,file_name),'wb')
+            #start download
+            filesize_dl=0                 
+        while True:               
             b_buffer=netfile.read(8*1024)
-            k[i]+=len(b_buffer)*8
             if not b_buffer:
                 #with this last dispatch, we fix the 'not 100%' bug when download is complete
-                status=r"%.1f kb/s %10.2f/%10.2f MB [%3.1f%%]"%(velocity,filesize_dl/1024.0/1024,file_size/1024.0/1024,file_size*100.0/file_size)
+                status=r"%10.2f/%10.2f MB [%3.1f%%]"%(filesize_dl/1024.0/1024,file_size,file_size*100.0/file_size)
                 status=status+chr(8)*(len(status)+1)
                 self.dispatch(status,)
                 break
             filesize_dl+=len(b_buffer)
             f.write(b_buffer)
-            status=r"%.1f kb/s %10.2f/%10.2f MB  [%3.1f%%]"%(velocity,filesize_dl/1024.0/1024,file_size/1024/1024,filesize_dl*100.0/file_size)
+            status=r"%10.2f/%10.2f MB  [%3.1f%%]"%(filesize_dl/1024.0/1024,file_size,filesize_dl*100.0/file_size*1024*1024)
             status=status+chr(8)*(len(status)+1)
             self.dispatch(status,)
         netfile.close()
