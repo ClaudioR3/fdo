@@ -67,13 +67,37 @@ class FindOperation(Operation):
         except Exception as e:
             self.dispatch(e)
             #self.dispatch(q.find_conn_probls())
+            
+    def description(self):
+        message="\n"+self.bold+"NAME"+self.reset+"\n\t sagitta find -[field] [value]\n"
+        message+="\n"+self.bold+"DESCRIPTION"+self.reset+"\n\t This operation executes a query in database where fields are equals\n\t values and shows a table with number of row, all datasets names with\n\t relative numbers of files and sizes.\n\t If you want know all fields of your database try 'sagitta describe'.\n\t Or do 'sagitta help describe' to know other feature.\n"
+        message+="\n"+self.bold+"EXAMPLE"+self.reset+"\n\t sagitta find :\n\t\t Without fields and values, this returns all what the database\n\t\t has.\n\n\t sagitta find -field1 value1 -field2 value2 ...:\n\t\t Query where 'field1'=='value1' and 'field2'=='value2'...\n"
+        message+="\n"+self.bold+"OPTIONS"+self.reset+"\n\t --oneline\n\t\t Show only the essential of research of 'find' (Number found\n\t\t files and total of sizes)\n\n\t --d\n\t\t Shows the datases without informations"
+        self.dispatch(message)
 
 class DescribeOperation(Operation):
     def __init__(self,args=[]):
         Operation.__init__(self, args)
         
     def run(self,q=Query()):
-        #return all fields name of database
+        #if without args, it tries to dispatch all fields, otherwise searches all possible values of args.
+        if len(self.args)==0: self.do_describe(q)
+        else:
+            #tupla=q.do_query({},0)
+            for field in self.args:
+                self.get_describe(q,field)
+                
+    def get_describe(self,q=Query(),field=""):
+        try:
+            all_values=q.do_query(select=field)
+            self.dispatch("All values of "+field+":\n")
+            for x in set(all_values):
+                self.dispatch(x[0])
+        except Exception as e:
+            self.dispatch(e)
+            
+    
+    def do_describe(self,q=Query()):
         try: 
             s=""    
             for e in q.do_describe(): s+= e+"\n"
@@ -84,8 +108,8 @@ class DescribeOperation(Operation):
     
     def description(self):
         message="\n"+self.bold+"NAME"+self.reset+"\n\t sagitta describe\n"
-        message+="\n"+self.bold+"DESCRIPTION"+self.reset+"\n\t Describe operation of Sagitta shows all fields of database\n"
-        message+="\n"+self.bold+"EXAMPLE"+self.reset+"\n\t sagitta describe :\n\t\t show fields\n\n\t sagitta describe [field] :\n\t\t show all possible value of 'field'\n"
+        message+="\n"+self.bold+"DESCRIPTION"+self.reset+"\n\t Describe operation of Sagitta shows all fields of database.\n"
+        message+="\n"+self.bold+"EXAMPLE"+self.reset+"\n\t sagitta describe :\n\t\t show fields\n\n\t sagitta describe [field] :\n\t\t show all possible value of 'field'.\n"
         self.dispatch(message)
     
 class ConfigOperation(Operation):
@@ -98,9 +122,9 @@ class ConfigOperation(Operation):
         
     def description(self):
         message="\n"+self.bold+"NAME"+self.reset+"\n\t sagitta config [option] [value]\n"
-        message+="\n"+self.bold+"DESCRIPTION"+self.reset+"\n\t Configuration operation of Sagitta allows to set the own connection\n\t to the database and other things. It will save all configuration data\n\t in config.txt\n"
-        message+="\n"+self.bold+"EXAMPLES"+self.reset+"\n\t sagitta config :\n\t\t do nothing\n\n\t sagitta config [option] [value]:\n\t\t set option with value\n\t sagitta config [option1] [value1] [option2] [value2] ...\n\t\t you can add more option and value in the same operation\n"
-        message+="\n"+self.bold+"OPTIONS"+self.reset+"\n\t -user <value>\n\t\tset user name with 'value' to access at the database\n\n\t-passwd <value>\n\t\tset password with 'value' to access at the database\n\n\t-host <value>\n\t\tset host with 'value' to access at the database, if you\n\t\tdon't set the host, it means like 'localhost'\n\n\t-db"
+        message+="\n"+self.bold+"DESCRIPTION"+self.reset+"\n\t Configuration operation of Sagitta allows to set the own connection\n\t to the database and other things. It will save all configuration data\n\t in config.txt.\n"
+        message+="\n"+self.bold+"EXAMPLES"+self.reset+"\n\t sagitta config :\n\t\t do nothing\n\n\t sagitta config [option] [value]:\n\t\t set option with value\n\t sagitta config [option1] [value1] [option2] [value2] ...\n\t\t you can add more option and value in the same operation.\n"
+        message+="\n"+self.bold+"OPTIONS"+self.reset+"\n\t -user <value>\n\t\t set user name with 'value' to access at the database\n\n\t-passwd <value>\n\t\tset password with 'value' to access at the database\n\n\t-host <value>\n\t\tset host with 'value' to access at the database, if you\n\t\tdon't set the host, it means like 'localhost'\n\n\t-db"
         self.dispatch(message)
         
 class GetconfigOperation(Operation):
@@ -143,8 +167,9 @@ class WgetOperation(Operation):
                     self.dispatch("Element after 'wget' is unknown")
             else:
                 self.dispatch(self.wget(q))
-        except :
-            return q.find_conn_probls()
+        except Exception as e:
+            self.dispatch(e)
+            #return q.find_conn_probls()
         
     def wget(self,q):
         s=""

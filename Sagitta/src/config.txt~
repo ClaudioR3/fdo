@@ -1,5 +1,5 @@
-passwd;@@Cloud24
+passwd;23=Dh+1
 table;MEDCORDEX
-host;localhost
+host;www.medcordex.eu
 db;medcordex
-user;root
+user;mdcx172

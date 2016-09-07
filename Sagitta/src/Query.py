@@ -9,7 +9,7 @@ from Document import Document,KL_Document
 class Query:
     '''
     the aim of this class is to build the query with different info by alias.txt,lastquery.txt and argoments 
-and let DBLink class to send the query to the database
+    and let DBLink class to send the query to the database
     '''
     def __init__(self):
         '''
@@ -18,7 +18,6 @@ and let DBLink class to send the query to the database
         self.dblink=DBlink()
         self.lastquery=Document("lastquery.txt")
         self.alias=KL_Document("alias.txt")
-        
         
     def compare(self,n1,n2):
         n1=str.lower(n1)
@@ -104,13 +103,15 @@ and let DBLink class to send the query to the database
                 s+= "%02d %70s : %5d files %10.2f MB \n"%(i,d,datasets[d][0],datasets[d][1])
         return "\nFound "+str(tot_files)+" files in "+str(i)+" Datasets, total size "+str(tot_size)+"MB\n\n"+s
         
-    def do_query(self,args):
-        query="select * from "+self.dblink.get_table()+self.build_where(args)
+    def do_query(self,args={},select="*",save=True):
+        #this builds the query, sends the query, save the query in lastquery.txt and returns the result(tupla)
+        query="select "+select+" from "+self.dblink.get_table()+self.build_where(args)
         tupla=self.dblink.send_query(query)
-        self.save_query(query)
+        if save: self.save_query(query)
         return tupla
     
     def do_describe(self):
+        #searches all fields in the database 
         describe=self.dblink.send_query("describe MEDCORDEX")
         l=[]
         for elem in describe:
