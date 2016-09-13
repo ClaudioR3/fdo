@@ -65,9 +65,8 @@ class FindOperation(Operation):
             else:
                 #dispatch table in the format of tupla_toString()
                 self.dispatch(table) 
-        except ():
-            return
-            #self.dispatch(e)
+        except Exception as e:
+            self.dispatch(e)
             #self.dispatch(q.find_conn_probls())
             
     def description(self):
