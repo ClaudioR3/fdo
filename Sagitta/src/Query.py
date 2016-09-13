@@ -19,21 +19,15 @@ class Query:
         self.lastquery=Document("lastquery.txt")
         self.alias=KL_Document("alias.txt")
         
-    def compare(self,n1,n2):
-        n1=str.lower(n1)
-        n2=str.lower(n2)
-        return n1==n2
-        
     def is_defined(self,name,describe):
-        nameDefined=""
-        for camp in describe:
-            if self.compare(name,camp):
-                nameDefined=name
-        if nameDefined=="":
-            nameDefined=self.is_alias(name)
-        return nameDefined
+        #this operation defines the field into 'where' query to send to the database
+        nameDefined=self.is_alias(name)
+        if nameDefined!='':
+            return nameDefined
+        return name
     
     def is_alias(self,name):
+        #search the alias for 'name' into alias.txt, if it's null return ""
         alias_map=self.alias.get_params()
         for k in alias_map:
             for v in alias_map[k]:
@@ -141,6 +135,7 @@ class Query:
         return self.lastquery.get_parameter(num)
         
     def get_index(self,name):
+        #return index of tupla where the name == a field name
         index=0
         for a in self.do_describe():
             if a==name:
@@ -155,4 +150,5 @@ class Query:
         return self.dblink.get_doc().get_parameter("path")
         
     def find_conn_probls(self):
+        #check if some info into config.txt is/are null
         return self.dblink.find_conn_probls()

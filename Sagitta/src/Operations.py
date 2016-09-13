@@ -25,14 +25,15 @@ class Operation(Publisher):
         
     def args_to_map(self,l):
         map_of_args={}
-        key=""
-        for arg in l:
-            if arg[0]=='-':
-                key=arg[1:]
-            else :
-                if key!="":
-                    map_of_args[key]=arg
-                    key=""
+        #check if length of list it's a multiple of two (-key value)*n_time
+        if len(l)%2 !=0: raise Exception("Insert all fields and values")
+        for i in range(0,len(l)/2):
+            #the key is l[i*2] and value is l[i*2+1]
+            #miss key
+            #key is not in form '-key'
+            if l[i*2][0]!='-': raise Exception("You missed key")
+            key=l[i*2].split('-')[1]
+            map_of_args[key]=l[i*2+1]
         return map_of_args
     
     def description(self):
@@ -64,8 +65,9 @@ class FindOperation(Operation):
             else:
                 #dispatch table in the format of tupla_toString()
                 self.dispatch(table) 
-        except Exception as e:
-            self.dispatch(e)
+        except ():
+            return
+            #self.dispatch(e)
             #self.dispatch(q.find_conn_probls())
             
     def description(self):
