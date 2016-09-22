@@ -8,12 +8,11 @@ import os
 from Query import Query
 from Observer import Publisher
 from netCDF4 import Dataset
+from Document import Document
 
 class Operation(Publisher):
     def __init__(self, args=[]):
         Publisher.__init__(self)
-        self.bold="\33[1m"
-        self.reset="\33[0;0m"
         self.args=args
         self.default_path=os.path.dirname(os.path.abspath(__file__))+"/Download/"
     
@@ -36,45 +35,17 @@ class Operation(Publisher):
             map_of_args[key]=l[i*2+1]
         return map_of_args
     
-    def description(self):
-        self.dispatch("Operation without description or not founded")
-    
 class FindOperation(Operation):
     def __init__(self,args=[]):
         Operation.__init__(self, args)
         
     def run(self,q=Query()):
         try :
-            opt=0
-            if self.args.count("--oneline")==1:
-                self.args.remove("--oneline")
-                opt=1
-            elif self.args.count("--d")==1:
-                self.args.remove("--d")
-                opt=2
-                
             #do query with a map of args -> args_map={camp of database: value of camp}
-            table=q.tupla_toString(q.do_query(self.args_to_map(self.args)))
-            if opt==1:
-                #dispatch only the first line (line[0] is empty)
-                self.dispatch(table.split('\n')[1])
-            elif opt==2:
-                #dispatch only dataset of table
-                for elem in table.split('\n')[4:]:
-                    self.dispatch(elem.split(':')[0]+"\n")
-            else:
-                #dispatch table in the format of tupla_toString()
-                self.dispatch(table) 
+            self.dispatch(q.tupla_toString(q.do_query(self.args_to_map(self.args)))) 
         except Exception as e:
             self.dispatch(e)
             #self.dispatch(q.find_conn_probls())
-            
-    def description(self):
-        message="\n"+self.bold+"NAME"+self.reset+"\n\t sagitta find -[field] [value]\n"
-        message+="\n"+self.bold+"DESCRIPTION"+self.reset+"\n\t This operation executes a query in database where fields are equals\n\t values and shows a table with number of row, all datasets names with\n\t relative numbers of files and sizes.\n\t If you want know all fields of your database try 'sagitta describe'.\n\t Or do 'sagitta help describe' to know other feature.\n"
-        message+="\n"+self.bold+"EXAMPLE"+self.reset+"\n\t sagitta find :\n\t\t Without fields and values, this returns all what the database\n\t\t has.\n\n\t sagitta find -field1 value1 -field2 value2 ...:\n\t\t Query where 'field1'=='value1' and 'field2'=='value2'...\n"
-        message+="\n"+self.bold+"OPTIONS"+self.reset+"\n\t --oneline\n\t\t Show only the essential of research of 'find' (Number found\n\t\t files and total of sizes)\n\n\t --d\n\t\t Shows the datases without informations"
-        self.dispatch(message)
 
 class DescribeOperation(Operation):
     def __init__(self,args=[]):
@@ -107,12 +78,6 @@ class DescribeOperation(Operation):
             self.dispatch(e)
             #self.dispatch(q.find_conn_probls())
     
-    def description(self):
-        message="\n"+self.bold+"NAME"+self.reset+"\n\t sagitta describe\n"
-        message+="\n"+self.bold+"DESCRIPTION"+self.reset+"\n\t Describe operation of Sagitta shows all fields of database.\n"
-        message+="\n"+self.bold+"EXAMPLE"+self.reset+"\n\t sagitta describe :\n\t\t show fields\n\n\t sagitta describe [field] :\n\t\t show all possible value of 'field'.\n"
-        self.dispatch(message)
-    
 class ConfigOperation(Operation):
     def __init__(self,args=[]):
         Operation.__init__(self, args)
@@ -120,13 +85,6 @@ class ConfigOperation(Operation):
     def run(self,q=Query()):
         #configure connection data
         q.config_dblink(self.args_to_map(self.args))
-        
-    def description(self):
-        message="\n"+self.bold+"NAME"+self.reset+"\n\t sagitta config [option] [value]\n"
-        message+="\n"+self.bold+"DESCRIPTION"+self.reset+"\n\t Configuration operation of Sagitta allows to set the own connection\n\t to the database and other things. It will save all configuration data\n\t in config.txt.\n"
-        message+="\n"+self.bold+"EXAMPLES"+self.reset+"\n\t sagitta config :\n\t\t do nothing\n\n\t sagitta config [option] [value]:\n\t\t set option with value\n\t sagitta config [option1] [value1] [option2] [value2] ...\n\t\t you can add more option and value in the same operation.\n"
-        message+="\n"+self.bold+"OPTIONS"+self.reset+"\n\t -user <value>\n\t\t set user name with 'value' to access at the database\n\n\t-passwd <value>\n\t\tset password with 'value' to access at the database\n\n\t-host <value>\n\t\tset host with 'value' to access at the database, if you\n\t\tdon't set the host, it means like 'localhost'\n\n\t-db"
-        self.dispatch(message)
         
 class GetconfigOperation(Operation):
     def __init__(self,args=[]):
@@ -418,24 +376,48 @@ class HelpOperation(Operation):
         self.lista=["help","find","describe","config","getconfig","delconfig","wget","selectrow","download","open"]
         
     def run(self,q=Query()):
-        if len(self.args)==0: self.show_operations()
-        else: self.show_descriptions()
+        try:
+            #without args shows all operations,
+            if len(self.args)==0: self.show_operations()
+            #otherwise shows the description of operation in args
+            else: self.show_descriptions()
+        except Exception as e:
+            self.dispatch(e)
+            
             
     def show_descriptions(self):
-        #for help operation
-        from OperationFactory import ReflectionOperationFactory
-        #call description function of operations in args
-        op_fact=ReflectionOperationFactory()
-        for arg in self.args:
-            op_fact.args=["help",arg]
-            op=op_fact.find_op(self.subscribers)
-            op.description()
+        try:
+            language=self.check_language(self.args)+".txt"
+            path=os.path.dirname(os.path.abspath(__file__))+"/Manual/"
+            #check if language exists into path
+            if os.path.exists(os.path.join(path,language)): doc=Document(language,path)
+            #otherwise raise exception
+            else : raise Exception("No language founded with name : "+language)
+            for a in self.args:
+                description=str(doc.get_parameter(a))
+                if description!="": self.dispatch(description)
+                else: raise Exception("Wrong operation or No describe implementation for this operation")
+        except Exception as e:
+            self.dispatch(e)
         
     def show_operations(self):
         # @return: list of operations 
         s= "List of operation: \n"
         for elem in self.lista: s+= "'"+elem+"' "
         self.dispatch(s)
+        
+    def check_language(self,args):
+        #default language
+        l="en"
+        for elem in args:
+            if elem[0]=='-':
+                if l != "en":
+                    #you must insert only one language, no more
+                    raise Exception("Too many language option")
+                else :
+                    l=elem[1:]
+                    args.remove(elem)
+        return l
     
 class NotOperation(Operation):
     def __init__(self,args=[]):

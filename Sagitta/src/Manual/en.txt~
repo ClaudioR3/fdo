@@ -1,0 +1,77 @@
+config/*/
+NAME
+	sagitta config [option] [value]
+
+DESCRIPTION
+	Configuration operation of Sagitta allows to set the own connection
+	to the database and other things. It will save all configuration data
+	in config.txt.
+
+EXAMPLES
+	sagitta config :
+		do nothing
+
+	sagitta config [option] [value]:
+		set option with value
+
+	sagitta config [option1] [value1] [option2] [value2] ...
+		you can add more option and value in the same operation.
+
+OPTIONS
+	-user <value>
+		set user name with 'value' to access at the database
+
+	-passwd <value>
+		set password with 'value' to access at the database
+
+	-host <value>
+		set host with 'value' to access at the database, if you
+		don't set the host, it means like 'localhost'
+
+	-db <value>
+		set database with 'value'
+
+	-table <value>
+		set table of database with 'value'
+/**/
+find/*/ 
+NAME
+	sagitta find -[field] [value]
+
+DESCRIPTION
+	This operation executes a query in database where fields are equals
+	values and shows a table with number of row, all datasets names with
+	relative numbers of files and sizes.
+	If you want know all fields of your database try 'sagitta describe'.
+	Or do 'sagitta help describe' to know other feature.
+
+EXAMPLE
+	sagitta find :
+		Without fields and values, this returns all what the database
+		has.
+
+	sagitta find -field1 value1 -field2 value2 ...:
+		Query where 'field1'=='value1' and 'field2'=='value2'...
+
+OPTIONS
+	--oneline
+		Show only the essential of research of 'find' (Number found
+		files and total of sizes)
+
+	--d
+		Shows the datases without informations
+/**/
+describe/*/
+NAME
+	sagitta describe
+
+DESCRIPTION
+	Describe operation of Sagitta shows all fields of database.
+
+EXAMPLE
+	sagitta describe :
+		show fields
+
+	sagitta describe [field] :
+		show all possible value of 'field'.
+/**/
