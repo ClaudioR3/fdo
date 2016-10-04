@@ -56,10 +56,10 @@ EXAMPLE
 OPTIONS
 	--oneline
 		Show only the essential of research of 'find' (Number found
-		files and total of sizes)
+		files and total of sizes).
 
 	--d
-		Shows the datases without informations
+		Shows the datases without informations.
 /**/
 describe/*/
 NAME
@@ -70,8 +70,123 @@ DESCRIPTION
 
 EXAMPLE
 	sagitta describe :
-		show fields
+		show database fields
 
 	sagitta describe [field] :
 		show all possible value of 'field'.
+/**/
+download/*/
+NAME
+	sagitta download
+
+DESCRIPTION
+	Download operation downloads all files have been selected by you.
+	When all of downloads are finished, you can search downloaded 
+	files in download path.
+	If you have never changed the path, the defaul path is:
+	/Sagitta's path/Download/
+	This operation can see if the files have been downloaded or 
+	must be downloaded yet.
+
+EXAMPLE
+	sagitta download :
+		shows the download status of any files you have selected
+		and the complessive download status.
+		For example, 3/10 files downloaded.
+/**/
+getconfig/*/
+NAME
+	sagitta getconfig
+
+DESCRIPTION
+	This operation shows all connection info. The info are written on 
+	the file with name 'config.txt' in sagitta's path.
+
+EXAMPLE
+	sagitta getconfig
+		Shows a table field = value
+		For example:
+		user = user-id
+		passwd = pass
+		host = localhost
+		db = database
+		path = /home/user/Sagitta/Download/
+/**/
+delconfig/*/
+NAME
+	sagitta delconfig
+
+DESCRIPTION
+	Delconfig operation, alias 'delete configuration', deletes all info
+	of your connection because reset 'config.txt' file.
+
+EXAMPLE
+	If config.txt is 'user = user-id'
+	sagitta delconfig
+	then the config.txt is ''(void)
+/**/
+wget/*/
+NAME
+	sagitta wget [opt]
+
+DESCRIPTION
+	This operation is for how knows the wget in the terminal.
+	This returns a wget list with all url of selected files of last query.
+	
+EXAMPLE
+	sagitta wget
+		return a list like this:
+		wget url+filename1
+		wget url+filename2
+		...
+		wget url+filenameN
+
+OPTION
+	[FindOperation]
+		you can apply wget on find operation like:
+		   wget find -field1 value1 ... -fieldN valueN
+		the program executes first find operation and then the wget 
+		on last find you did.
+
+	[SelectRowOperation]
+		you can apply wget on selectrow operation like:
+		   wget selectrow row1 row2 ... rowN
+		the program executes first selectrow operation and then the wget 
+		on last operation you did.	
+/**/
+open/*/
+NAME
+	sagitta open [opt]
+
+DESCRIPTION
+	This operation opens selected files with extention *.nc and showing the 
+	information like variables and dimensions.
+
+OPTION
+	-all
+		open all files in download path
+
+	[directory1] [directory2] ...
+		open all files in all added directories
+
+	[file1.nc] [file2.nc] ...
+		open all inserted files
+/**/
+selectrow/*/
+NAME
+	sagitta selectrow [row]
+
+DESCRIPTION
+	When you find your type of files you are searching, the result is a table 
+	with 4 fields: row; DATASET NAME; Number FILES; Number SIZE(MB)
+	This operation select the numbers of the rows you inserted for select the
+	datasets you want.
+
+EXAMPLE
+	I need 3 datasets. This datasets are in 3, 35, 36 rows. Then do:
+	  sagitta selectrow 3 35 36
+	and now I select that datasets at row 3, 35, 36.
+	Now you can repeat again to select only one of this, for example:
+	  sagitta selectrow 2
+	or just download all found files with that dataset name.
 /**/
