@@ -35,6 +35,19 @@ class Operation(Publisher):
             map_of_args[key]=l[i*2+1]
         return map_of_args
     
+class LogOperation(Operation):
+    def _init_(self,args=[]):
+        Operation.__init__(self, args)
+        
+    def run(self,q=Query()):
+        # last 10 operations 
+        number_of_log=10
+        history=Document("history.txt")
+        with history.get_params() as story:
+            for i in story.keys():
+                self.dispatch(story[i]+"\n")
+        
+    
 class FindOperation(Operation):
     def __init__(self,args=[]):
         Operation.__init__(self, args)
@@ -42,7 +55,9 @@ class FindOperation(Operation):
     def run(self,q=Query()):
         try :
             #do query with a map of args -> args_map={camp of database: value of camp}
-            self.dispatch(q.tupla_toString(q.do_query(self.args_to_map(self.args)))) 
+            #select only in dataset and size for optimization
+            double=q.do_query(args=self.args_to_map(self.args),select="dataset,size,fname")
+            self.dispatch(q.double2table(double))
         except Exception as e:
             self.dispatch(e)
             #self.dispatch(q.find_conn_probls())
@@ -66,8 +81,7 @@ class DescribeOperation(Operation):
             for x in set(all_values):
                 self.dispatch(x[0])
         except Exception as e:
-            self.dispatch(e)
-            
+            self.dispatch(e) 
     
     def do_describe(self,q=Query()):
         try: 
@@ -151,8 +165,8 @@ class SelectrowOperation(Operation):
     def run(self,q=Query()):
         try:
             if len(self.args)==0: self.dispatch("At least one row")
-            if self.is_int_and_uniq(self.args)==True: 
-                self.dispatch( q.tupla_toString(q.send_query(self.build_new_query(q))))
+            if self.is_int_and_uniq(self.args): 
+                self.dispatch( q.double2table(q.send_query(self.build_new_query(q))))
         except ValueError as te:
             self.dispatch( "%s is not int"%te[0])
         except SyntaxError as se:
@@ -175,8 +189,9 @@ class SelectrowOperation(Operation):
     def build_new_query(self,q):
         new_query=q.get_last_query()
         if new_query=="":raise NameError
-        new_query_div=new_query.split(" ")
-        if len(new_query_div)==4:
+        new_query_div=new_query.split("where")
+        #check if exists where in query
+        if len(new_query_div)==1:
             new_query+=" where"
         else:
             new_query+=" and"

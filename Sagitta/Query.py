@@ -67,38 +67,31 @@ class Query:
             i+=1
         self.lastquery.write(lq)
         
-    def get_datasets(self,tupla):
-        #return {dataset name:[n file , n size(MB)]}
-        datasets={}
-        index_dataset=self.get_index("dataset")
-        index_size=self.get_index("size")
-        for elem in tupla:
-            if datasets.has_key(elem[index_dataset]):
-                datasets[elem[index_dataset]][0]+=1
-                datasets[elem[index_dataset]][1]+=elem[index_size]
-            else:
-                datasets[elem[index_dataset]]=[1,elem[index_size]]
-        return datasets
-    
-    def tupla_toString(self,tupla):
+    def double2table(self,triple):
         #return N Datasets, N files, N size(MB)
-        datasets=self.get_datasets(tupla)
-        self.save_datasets(datasets)
-        s=""
+        #double=((dataset1,size1),(dataset2,size2),....)
+        t={}
+        f={}
         i=0
-        tot_files=0
-        tot_size=0
-        if len(datasets)!=0:
-            s+="row %69s %13s %14s\n"%("DATASET NAME","N FILES","N MBs")
-            for d in datasets:
-                i+=1
-                tot_files+=datasets[d][0]
-                tot_size+=datasets[d][1]
-                s+= "%02d %70s : %5d files %10.2f MB \n"%(i,d,datasets[d][0],datasets[d][1])
-        return "\nFound "+str(tot_files)+" files in "+str(i)+" Datasets, total size "+str(tot_size)+"MB\n\n"+s
+        if len(triple)>0:
+            s="row %69s %13s %14s\n"%("DATASET NAME","N FILES","N MBs")
+        for dataset,size,fname in triple:
+            if dataset in t:
+                t[dataset]+=size
+                f[dataset]+=1
+            else:
+                t[dataset]=size
+                f[dataset]=1
+        #save dataset in lastquery.txt
+        self.save_datasets(t.keys())
+        for d in t:
+            i+=1
+            s+= "%02d %70s : %5d files %10.2f MB \n"%(i,d,f[d],t[d])
+        return "\nFound "+str(sum(f.values()))+" files in "+str(len(t))+" Datasets, total size "+str(sum(t.values()))+"MB\n\n"+s
         
     def do_query(self,args={},select="*",save=True):
         #this builds the query, sends the query, save the query in lastquery.txt and returns the result(tupla)
+        #this function saves only query, doesn't save dataset
         query="select "+select+" from "+self.dblink.get_table()+self.build_where(args)
         tupla=self.dblink.send_query(query)
         if save: self.save_query(query)
@@ -127,22 +120,33 @@ class Query:
     def send_query(self,query):
         tupla=self.dblink.send_query(query)
         self.save_query(query)
-        datasets=self.get_datasets(tupla)
-        self.save_datasets(datasets)
         return tupla
     
     def get_row_dataset(self,num):
         return self.lastquery.get_parameter(num)
+    
+    def get_select(self):
+        #return a string of all select filed ('*' or 'field1,field2,...fieldN')
+        return self.lastquery.get_parameter("query").split(" ")[1] 
         
     def get_index(self,name):
         #return index of tupla where the name == a field name
-        index=0
-        for a in self.do_describe():
-            if a==name:
-                return index
-            index+=1
-        return -1
-        
+        select=self.get_select()
+        if select =='*':
+            #case 1: select *
+            index=0
+            for a in self.do_describe():
+                if a==name: return index
+                index+=1
+            raise Exception(name+" are not in table")
+        else:
+            #case 2: select ...,name,...
+            index=0
+            for field in select.split(','):
+                if name==field: return index
+                index+=1
+        #case 3: select ...,other,...
+        raise Exception("Index not found")
     def get_url(self):
         return self.dblink.get_url()
     

@@ -1,3 +1,0 @@
-host/*/www.medcordex.eu/**/
-db/*/medcordex/**/
-table/*/MEDCORDEX/**/
