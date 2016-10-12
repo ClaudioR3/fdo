@@ -40,12 +40,13 @@ class LogOperation(Operation):
         Operation.__init__(self, args)
         
     def run(self,q=Query()):
-        # last 10 operations 
-        number_of_log=10
-        history=Document("history.txt")
-        with history.get_params() as story:
-            for i in story.keys():
-                self.dispatch(story[i]+"\n")
+        '''
+        dispatch all argoments into log.txt
+        '''
+        log=Document("log.txt")
+        story=log.get_params()
+        for i in story:
+            self.dispatch(story[i]+"\n")
         
     
 class FindOperation(Operation):

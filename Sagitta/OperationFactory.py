@@ -19,26 +19,28 @@ class ReflectionOperationFactory:
             objecT=the_class()
             objecT.set_args(self.args[2:])
             objecT.subscribers=subscribers
+            self.save_operation(self.args)
             return objecT
-        except:
+        except :
             n_op=NotOperation()
             n_op.subscribers=subscribers
             return n_op
             
-    def save_operations(self,operation):
+    def save_operation(self,operation):
         '''
         save the operation in history.txt. It saves last 10 operations
         '''
-        history=Document("history.txt")
-        prec=operation
-        i=1
-        for op in hystory.get_params().keys():
-            if(i>10): break
-            tmp=op
-            op=prec
+        log=Document("log.txt")
+        operations=log.get_params()
+        prec=""
+        for arg in operation:
+            prec+=arg+" "
+        for key in operations:
+            tmp=operations[key]
+            operations[key]=prec
             prec=tmp
-            i+=1
-            
+        operations[len(operations)+1]=prec
+        log.update(operations)
         
     def my_import(self,name):
         components = name.split('.')

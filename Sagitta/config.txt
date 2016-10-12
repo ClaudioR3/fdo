@@ -1,5 +1,3 @@
-passwd/*/@@Cloud24/**/
 table/*/MEDCORDEX/**/
-host/*/localhost/**/
+host/*/www.medcordex.eu/**/
 db/*/medcordex/**/
-user/*/root/**/

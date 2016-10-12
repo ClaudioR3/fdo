@@ -1,7 +1,104 @@
 find/*/
+
 NOME
+
 	sagitta find -[campo] [valore]
 
+
+
 DESCRIZIONE
-	blablabla
+
+	Questa operazione effettua una query dove il campo C conicide
+	con il valore X. E' possibile inserire più campi alla volta.
+	Il risultato di questa operazione è una tabella suddivisa per 
+	dataset. Ciascun dataset è composto da un numero di riga, il 
+	numero totale di file e di size(MB) aventi quel dataset.
+
+ESEMPIO
+	sagitta find -VariableName tas -Frequency 3hr
+		effettua una query nella tabella table del database db
+		dove il campo VariableName coincide con il valore tas
+		e il campo Frequency coincide con il valore 3hr
+
+	sagitta find 
+		
+
+	
+/**/
+config/*/
+NOME
+	sagitta config -[opt] valore
+
+DESCRIZIONE
+	Tramite questa operazioni si configura l'accesso al 
+	proprio database. Questa è necessaria eseguirla almeno una
+	per configurare correttamente user-name(user), password(passwd),
+	host, database(db) e la tabella di accesso all'interno del 
+	database(table). Se l'host non viene configurato questo è 
+	equivalente a localhost. La maggior parte di queste informazioni
+	serviranno a comunicare correttamente con il database indicato.
+	Attraverso questa operazione è possibile configurare ulteriori
+	informazioni tra cui la cartella in cui salvare i file.nc che
+	si andranno a scaricare. Tutte le possibili opzioni nella 
+	sezione OPZIONI.
+
+ESEMPIO
+	sagitta config -user root -passwd abc123 -host localhost
+		per conficurare il nome utente = root, password=abc123, 
+		ed infine nome dell'host=localhost.
+
+OPZIONI
+	-user
+		impostare il nome utente per accedere al database
+
+	-passwd
+		impostare la password di accesso al database
+
+	-host
+		impostare l'host su cui si appoggia il database
+
+	-db
+		impostare il nome del database
+
+	-table
+		impostare la tabella del database, dove si vogliono
+		effettuare le query
+
+	-path
+		impostare la cartella di destinazione per i file da
+		scaricare
+/**/
+describe/*/
+NOME
+	sagitta describe [opt]
+
+DESCRIZIONE
+	L'operazione svolge una ricerca su database per conoscere alcune
+	delle sue informazioni più importanti.
+	Senza l'aggiunta di opzioni, l'operazione mostra i campi (fields)
+	del database. Utile per field lunghi e complicati. In questo caso
+	si consiglia anche di creare o aggiungere alias per il field
+	preso in considerazione
+	(vedere su https:\\github.com\ClaudioR3\Sagitta\wiki\Alias).
+	Se l'operazione 'describe' viene seguita da un campo 'field', 
+	questa mostra tutti i possibili valori del campo 'field'.
+
+ESEMPIO
+	sagitta describe
+		All fields:
+			variablename
+			frequency
+			fname
+			...
+
+	sagitta describe variablename
+		All values of variablename:
+			a1
+			a2
+			tas
+			...
+
+OPZIONE
+	[field] : unica possibile opzione è il campo su cui effettuare il 
+		  describe come già spiegato in precedenza.
 /**/

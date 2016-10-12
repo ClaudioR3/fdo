@@ -190,3 +190,23 @@ EXAMPLE
 	  sagitta selectrow 2
 	or just download all found files with that dataset name.
 /**/
+log/*/
+NAME
+	sagitta log
+
+DESCRIPTION
+	This shows last operations you did.
+
+EXAMPLE
+	I did in sequence:
+		sagitta find -v tas -f 3hr
+		sagitta selectrow 1 2 3
+		sagitta download
+		sagitta open --all
+	So 'sagitta log' shows:
+		sagitta open --all
+		sagitta download
+		sagitta selectrow 1 2 3
+		sagitta find -v tas -f 3hr
+
+/**/
