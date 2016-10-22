@@ -39,10 +39,18 @@ class DBlink:
         return url
         
     def send_query(self,query):
-        database=mysql.connect(host=self.config.get_parameter("host"),
-                                 user=self.config.get_parameter("user"),
-                                 passwd=self.config.get_parameter("passwd"),
-                                 db=self.config.get_parameter("db"))
+        # default configuration for medcordex users
+        if self.config.get_parameter("host")=='www.medcordex.eu':
+            database=mysql.connect(host=self.config.get_parameter("host"),
+                                     user='sagitta',
+                                     passwd='sagitta',
+                                     db=self.config.get_parameter("db"))
+        # presonal configuration for all other cases
+        else:
+            database=mysql.connect(host=self.config.get_parameter("host"),
+                                     user=self.config.get_parameter("user"),
+                                     passwd=self.config.get_parameter("passwd"),
+                                     db=self.config.get_parameter("db"))
         cursore=database.cursor()
         cursore.execute(query)
         return cursore.fetchall()

@@ -3,6 +3,7 @@ Created on 01 lug 2016
 
 @author: claudio
 '''
+import os
 from DBlink import DBlink
 from Document import Document,KL_Document
 
@@ -17,7 +18,8 @@ class Query:
         '''
         self.dblink=DBlink()
         self.lastquery=Document("lastquery.txt")
-        self.alias=KL_Document("alias.txt")
+	path=os.path.dirname(os.path.abspath(__file__))
+        self.alias=KL_Document("alias.txt",path)
         
     def is_defined(self,name,describe):
         #this operation defines the field into 'where' query to send to the database
@@ -65,7 +67,7 @@ class Query:
         for d in datasets:
             lq[i]=d
             i+=1
-        self.lastquery.write(lq)
+        self.lastquery.update(lq)
         
     def double2table(self,triple):
         #return N Datasets, N files, N size(MB)

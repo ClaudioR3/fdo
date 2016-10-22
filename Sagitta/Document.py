@@ -6,38 +6,60 @@ Created on Jul 12, 2016
 import os
 
 class Document:
-    def __init__(self,name,path=os.path.dirname(os.path.abspath(__file__))):
+    def __init__(self,name,path=os.getenv("HOME")):
         self.name=name
-        self.path=path
+        if path!=os.path.dirname(os.path.abspath(__file__)): 
+            self.path=path+'/.Sagitta/'
+        else: self.path=path
         self.params=self.read()
         
     def create_file(self):
+        #create the path if not exists
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
+        #create the file in path
         doc = open(os.path.join(self.path,self.name), "w")
         doc.close()
+        #retry read
         return self.read()
-        
+
+    def cript(self,string, key):
+        new_string = ""
+        i = 0
+        for char in string:
+            new_string += chr((ord(char) + key[i]) % 128)
+            i += 1
+            if i >= len(key):
+                i = 0
+        return new_string	
+
     def read(self):
         try:
-            doc= open(os.path.join(self.path,self.name), "r").read()
-            p=doc.split("/**/\n")
+            f= open(os.path.join(self.path,self.name), "r")
+            doc=f.read()
+            if self.name=='config.txt':
+                doc=self.cript(doc,(-2,-8,1,-4))
+            p=doc.split("\n")
             params={}
             for i in p:
-                lista_riga=i.split("/*/")
+                lista_riga=i.split(";")
                 if lista_riga!=[""]:
                     params[lista_riga[0]]=lista_riga[1]
+            f.close()
             return params
         except:
             return self.create_file()
     
     def update(self,params):
         for p in params:
-            self.get_params()[p]=params[p]
-        self.write(self.get_params())
+            self.params[p]=params[p]
+        self.write(self.params)
     
     def write(self,params):
         doc = open(os.path.join(self.path,self.name), "w")
         for p in params.keys():
-            riga = "%s/*/%s/**/\n"%(p,params[p])
+            riga = "%s;%s\n"%(p,params[p])
+            if self.name=='config.txt': riga=self.cript(text,(2,8,-1,4))
             doc.write(riga)
         doc.close()
         self.set_params(self.read())
@@ -57,17 +79,7 @@ class Document:
         if key in self.params:
             return self.params[key]
         return ""
-    
-    def verif_conn_params(self):
-        vcp=["host", "db", "user", "passwd", "table"]
-        nfp=[i for i in vcp if i not in self.get_params().keys()]
-        if len(nfp)!=0:
-            if len(nfp)>1:
-                return "%s are null"%nfp[0:]
-            else:
-                return "%s is null"%nfp[0]
-        return "Wrong Config of Conn "+ "\n 'getconfig' to look your config "
-        
+
     def toString(self):
         s=""
         keyset=self.get_params().keys()
@@ -81,9 +93,9 @@ class KL_Document(Document):
     This class is different than simple Document class because 
     it must read like map={key:[list]} by 'name'.txt
     '''
-    def __init__(self,name):
+    def __init__(self,name,path):
         #initialization of super-class
-        Document.__init__(self, name)
+        Document.__init__(self, name,path)
         
     def read(self):
         #self.params= a map like {key:[list]}

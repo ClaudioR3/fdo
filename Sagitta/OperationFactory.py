@@ -21,7 +21,7 @@ class ReflectionOperationFactory:
             objecT.subscribers=subscribers
             self.save_operation(self.args)
             return objecT
-        except :
+        except ():
             n_op=NotOperation()
             n_op.subscribers=subscribers
             return n_op
