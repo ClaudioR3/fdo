@@ -80,19 +80,23 @@ NAME
 	sagitta download
 
 DESCRIPTION
-	Download operation downloads all files have been selected by you.
+	This operation downloads all files have been selected by you.
+	To change download URL, you need 'config' operation:
+		sagitta config -url url_name
+	URL is the part of download url without file_name.nc .
+	When the download is started, you can see the download status.
+	If URL is HTTP type, if the download of a file is crashed, 
+	when you repeat the download operation, it resume the file. 
 	When all of downloads are finished, you can search downloaded 
 	files in download path.
 	If you have never changed the path, the defaul path is:
-	/Sagitta's path/Download/
-	This operation can see if the files have been downloaded or 
-	must be downloaded yet.
+		path/to/Sagitta/Download/
+	you can change using 'config':
+		sagitta config -path new_path
 
 EXAMPLE
 	sagitta download :
-		shows the download status of any files you have selected
-		and the complessive download status.
-		For example, 3/10 files downloaded.
+		3/10 downloaded file_name.nc 43% [43/100 MB]
 /**/
 getconfig/*/
 NAME

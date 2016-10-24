@@ -6,12 +6,17 @@ Created on Jul 12, 2016
 import os
 
 class Document:
-    def __init__(self,name,path=os.getenv("HOME")):
-        self.name=name
-        if path!=os.path.dirname(os.path.abspath(__file__)): 
-            self.path=path+'/.Sagitta/'
-        else: self.path=path
-        self.params=self.read()
+    def __init__(self,name,path=os.getenv('HOME')):
+	try:
+            #for linux and mac systems
+       	    self.name=name
+            self.path=path
+            self.params=self.read()
+        except TypeError:
+            #for windows system 
+            self.path=os.path.expanduser(os.getenv('USERPROFILE'))+'\\Documents\\Sagitta'
+            self.params=self.read()
+            
         
     def create_file(self):
         #create the path if not exists
@@ -19,6 +24,10 @@ class Document:
             os.makedirs(self.path)
         #create the file in path
         doc = open(os.path.join(self.path,self.name), "w")
+        if self.name=='config.txt':
+            message='host;www.medcordex.eu\ndb;medcordex\ntable;MEDCORDEX'
+            message=self.cript(message,(2,8,-1,4))
+            doc.write(message)
         doc.close()
         #retry read
         return self.read()

@@ -30,7 +30,7 @@ NOME
 	sagitta config -[opt] valore
 
 DESCRIZIONE
-	Tramite questa operazioni si configura l'accesso al 
+	Tramite questa operazioni si configura i dati di accesso al 
 	proprio database. Questa è necessaria eseguirla almeno una
 	per configurare correttamente user-name(user), password(passwd),
 	host, database(db) e la tabella di accesso all'interno del 
@@ -39,12 +39,12 @@ DESCRIZIONE
 	serviranno a comunicare correttamente con il database indicato.
 	Attraverso questa operazione è possibile configurare ulteriori
 	informazioni tra cui la cartella in cui salvare i file.nc che
-	si andranno a scaricare. Tutte le possibili opzioni nella 
-	sezione OPZIONI.
+	si andranno a scaricare e l'URL dove andare a scaricare i file.
+	Tutte le possibili opzioni nella sezione OPZIONI.
 
 ESEMPIO
 	sagitta config -user root -passwd abc123 -host localhost
-		per conficurare il nome utente = root, password=abc123, 
+		per configurare il nome utente = root, password=abc123, 
 		ed infine nome dell'host=localhost.
 
 OPZIONI
@@ -101,4 +101,29 @@ ESEMPIO
 OPZIONE
 	[field] : unica possibile opzione è il campo su cui effettuare il 
 		  describe come già spiegato in precedenza.
+/**/
+download/*/
+NOME
+	sagitta download
+
+DESCRIZIONE
+	Questa operazione andrà a scaricare i file da te selezionati.
+	E' possibile modificare l'url con l'operazione 'config':
+		sagitta config -url url_da_utilizzare
+	Per url si intende la parte dell'url che precede il file.nc da 
+	scaricare.
+	A schermo verrà visualizzato lo stato di download e se un file.nc
+	è già stato scaricato in precedenza, non verrà nuovamente scaricato.
+	Se l'URL è di tipo HTTP il download del file fermato, per problemi
+	di connessione o altro (per esempio), potrà esser ripreso.
+	Una volta conclusi tutti i download, i file sono stati salvati nel
+	download path che di default è:
+		path/to/Sagitta/Download/
+	anche questo può esser modificato attraverso 'config':
+		sagitta config -path nuovo_path
+
+ESEMPIO
+	
+	sagitta download :
+		3/10 downloaded file_name.nc 43% [43/100 MB]
 /**/
