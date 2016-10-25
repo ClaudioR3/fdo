@@ -16,18 +16,17 @@ class Document:
             #for windows system 
             self.path=os.path.expanduser(os.getenv('USERPROFILE'))+'\\Documents\\Sagitta'
             self.params=self.read()
-            
-        
+
     def create_file(self):
         #create the path if not exists
         if not os.path.exists(self.path):
             os.makedirs(self.path)
         #create the file in path
         doc = open(os.path.join(self.path,self.name), "w")
-        if self.name=='config.txt':
-            message='host;www.medcordex.eu\ndb;medcordex\ntable;MEDCORDEX'
-            message=self.cript(message,(2,8,-1,4))
-            doc.write(message)
+        #if self.name=='config.txt':
+        #    message='host;www.medcordex.eu\ndb;medcordex\ntable;MEDCORDEX'
+        #    message=self.cript(message,(2,8,-1,4))
+        #    doc.write(message)
         doc.close()
         #retry read
         return self.read()
@@ -44,19 +43,18 @@ class Document:
 
     def read(self):
         try:
-            f= open(os.path.join(self.path,self.name), "r")
+            f= open(os.path.join(self.path,self.name), "rb")
             doc=f.read()
-            if self.name=='config.txt':
-                doc=self.cript(doc,(-2,-8,1,-4))
+            f.close()
+            #if self.name=='config.txt': doc=self.cript(doc,(-2,-8,1,-4))
             p=doc.split("\n")
             params={}
             for i in p:
                 lista_riga=i.split(";")
                 if lista_riga!=[""]:
                     params[lista_riga[0]]=lista_riga[1]
-            f.close()
             return params
-        except:
+        except ():
             return self.create_file()
     
     def update(self,params):
@@ -65,10 +63,10 @@ class Document:
         self.write(self.params)
     
     def write(self,params):
-        doc = open(os.path.join(self.path,self.name), "w")
+        doc = open(os.path.join(self.path,self.name), "wb")
         for p in params.keys():
             riga = "%s;%s\n"%(p,params[p])
-            if self.name=='config.txt': riga=self.cript(text,(2,8,-1,4))
+            #if self.name=='config.txt': riga=self.cript(riga,(2,8,-1,4))
             doc.write(riga)
         doc.close()
         self.set_params(self.read())

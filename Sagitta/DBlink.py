@@ -12,6 +12,10 @@ class DBlink:
     
     def __init__(self):
         self.config=Document("config.txt")
+        default_host='www.medcordex.eu'
+        default_user='sagitta'
+        default_passwd='sagitta'
+        dafault_db='medcordex'
         
     def set_config(self,params):
         self.config.update(params)
@@ -40,11 +44,11 @@ class DBlink:
         
     def send_query(self,query):
         # default configuration for medcordex users
-        if self.config.get_parameter("host")=='www.medcordex.eu':
-            database=mysql.connect(host=self.config.get_parameter("host"),
-                                     user='sagitta',
-                                     passwd='sagitta',
-                                     db=self.config.get_parameter("db"))
+        if self.config.get_parameter("host")=='' and self.config.get_parameter('db')=='':
+            database=mysql.connect(host=default_host,
+                                     user=default_user,
+                                     passwd=default_passwd,
+                                     db=default_db)
         # presonal configuration for all other cases
         else:
             database=mysql.connect(host=self.config.get_parameter("host"),
@@ -54,11 +58,4 @@ class DBlink:
         cursore=database.cursor()
         cursore.execute(query)
         return cursore.fetchall()
-    
-    def find_conn_probls(self):
-        try:
-            self.get_cursore()
-            return "Table Problem \n you can do 'config -table TABLE' to define table"
-        except:
-            return self.config.verif_conn_params()
         
