@@ -96,7 +96,7 @@ class Query:
         #this builds the query, sends the query, save the query in lastquery.txt and returns the result(tupla)
         #this function saves only query, doesn't save dataset
         table=self.dblink.get_table()
-        if table=='': table=self.default_table
+        if self.dblink.get_table()=='': 
         query="select "+select+" from "+table+self.build_where(args)
         tupla=self.dblink.send_query(query)
         if save: self.save_query(query)

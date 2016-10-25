@@ -15,7 +15,7 @@ class DBlink:
         self.default_host='www.medcordex.eu'
         self.default_user='sagitta'
         self.default_passwd='sagitta'
-        self.default_db='medcordex'
+        self.dafault_db='medcordex'
         
     def set_config(self,params):
         self.config.update(params)

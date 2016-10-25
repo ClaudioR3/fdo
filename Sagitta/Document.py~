@@ -54,7 +54,7 @@ class Document:
                 if lista_riga!=[""]:
                     params[lista_riga[0]]=lista_riga[1]
             return params
-        except :
+        except ():
             return self.create_file()
     
     def update(self,params):
