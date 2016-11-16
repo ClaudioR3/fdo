@@ -57,8 +57,8 @@ class FindOperation(Operation):
         try :
             #do query with a map of args -> args_map={camp of database: value of camp}
             #select only in dataset and size for optimization
-            double=q.do_query(args=self.args_to_map(self.args),select="dataset,size,fname")
-            self.dispatch(q.double2table(double))
+            triple=q.do_query(args=self.args_to_map(self.args),select="dataset,size,fname")
+            self.dispatch(q.triple2table(triple))
         except Exception as e:
             self.dispatch(e)
             #self.dispatch(q.find_conn_probls())
