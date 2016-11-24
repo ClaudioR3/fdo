@@ -155,9 +155,9 @@ class Query:
             raise Exception(name+" are not in table")
         else:
             #case 2: select ...,name,...
-            fileds=select.split(',')
-            for i in range(0,len(fields)):
-                if fields[i]==name: return fields[i]
+            fields=select.split(',')
+            for index in range(0,len(fields)):
+                if fields[index]==name: return index
         #case 3: select ...,other,...
         raise Exception("Index not found")
         

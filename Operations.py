@@ -297,7 +297,7 @@ class DownloadOperation(Operation):
         size_index=q.get_index("size")
         dataset_index=q.get_index("dataset")
         url=q.get_url()
-        query=q.send_query(q.get_last_query())
+        query=q.do_query(query=q.get_last_query())
         #check path in config.txt and, if not exists, set default path
         path=q.get_path()
         if path=="": path=self.default_path
