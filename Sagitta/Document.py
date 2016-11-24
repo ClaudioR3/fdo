@@ -63,14 +63,14 @@ class Document:
             doc=f.read()
             f.close()
             #if self.name=='config.txt': doc=self.cript(doc,(-2,-8,1,-4))
-            p=doc.split("\n")
+            p=doc.split("/**/\n")
             params={}
             for i in p:
-                lista_riga=i.split(";")
+                lista_riga=i.split("/*/")
                 if lista_riga!=[""]:
                     params[lista_riga[0]]=lista_riga[1]
             return params
-        except :
+        except ():
             #if the file are not found
             return self.create_file()
     
@@ -90,7 +90,7 @@ class Document:
         '''
         doc = open(os.path.join(self.path,self.name), "wb")
         for p in params.keys():
-            riga = "%s;%s\n"%(p,params[p])
+            riga = "%s/*/%s/**/\n"%(p,params[p])
             #if self.name=='config.txt': riga=self.cript(riga,(2,8,-1,4))
             doc.write(riga)
         doc.close()
@@ -123,9 +123,10 @@ class Document:
         @param key: string
         @return value: string
         '''
-        if key in self.params:
+        try:
             return self.params[key]
-        return ""
+        except:
+            return ""
 
     def toString(self):
         '''
@@ -134,8 +135,7 @@ class Document:
         s=""
         keyset=self.get_params().keys()
         keyset.sort()
-        for k in keyset :
-            s+= k+" = "+self.get_params()[k]+" \n"  
+        for k in keyset : s+= k+" = "+self.get_params()[k]+" \n"  
         return s
     
 class KL_Document(Document):
